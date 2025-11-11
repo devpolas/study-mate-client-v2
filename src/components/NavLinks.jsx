@@ -11,7 +11,7 @@ export default function NavLinks() {
       <NavLinkWithIcon path='/find-partner' icon={<MdPersonSearch />}>
         Find Partner
       </NavLinkWithIcon>
-      <NavLinkWithIcon path='/create-profile' icon={<BsPersonBoundingBox />}>
+      <NavLinkWithIcon path='/profile' icon={<BsPersonBoundingBox />}>
         Profile
       </NavLinkWithIcon>
     </div>

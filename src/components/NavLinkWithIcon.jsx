@@ -10,7 +10,7 @@ export default function NavLinkWithIcon({ path, icon, children }) {
         } hover:text-info text-sm sm:text-lg md:text-xl lg:text-2xl transition-all duration-150 ease-in-out`
       }
     >
-      <span className='flex flex-row gap-2 items-center'>
+      <span className='flex flex-row gap-1 items-center'>
         {icon}
         <span>{children}</span>
       </span>
