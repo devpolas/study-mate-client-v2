@@ -4,8 +4,10 @@ import { ImMenu4 } from "react-icons/im";
 import { ImMenu3 } from "react-icons/im";
 import { GrHomeRounded } from "react-icons/gr";
 import { BsPersonBoundingBox } from "react-icons/bs";
+import { FcGoogle } from "react-icons/fc";
 import { MdPersonSearch } from "react-icons/md";
 import { Link } from "react-router";
+import SignWith from "./SignWith";
 
 export default function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,7 +25,7 @@ export default function MobileNav() {
       </button>
 
       {isOpen && (
-        <div className='absolute top-[65px] left-0 w-52 p-4 shadow rounded-md bg-white/90 dark:bg-gray-900/90 backdrop-blur-md'>
+        <div className='absolute top-[65px] -left-4 w-xs p-4 shadow rounded-md bg-white/97 dark:bg-gray-900/97 backdrop-blur-md'>
           <div>
             <div className='flex-col gap-4 flex pb-2'>
               <NavLinkWithIcon path='/' icon={<GrHomeRounded />}>
@@ -41,13 +43,16 @@ export default function MobileNav() {
             </div>
           </div>
           <div>
-            <div className='flex flex-row items-center pt-2 border-t-2 border-gray-300 dark:border-gray-700 gap-2'>
-              <Link to='/login' class='btn btn-outline btn-info'>
-                Login
-              </Link>
-              <Link to='/signup' class='btn btn-outline btn-primary'>
-                Signup
-              </Link>
+            <div className='flex flex-col'>
+              <div className='flex flex-row items-center justify-center pt-2 border-t-2 border-gray-300 dark:border-gray-700 gap-2'>
+                <Link to='/login' class='btn btn-outline btn-info'>
+                  Login
+                </Link>
+                <Link to='/signup' class='btn btn-outline btn-primary'>
+                  Signup
+                </Link>
+              </div>
+              <SignWith icon={<FcGoogle />}>Continue with Google</SignWith>
             </div>
           </div>
         </div>
