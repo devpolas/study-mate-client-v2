@@ -28,9 +28,9 @@ export default function ThemeSwitch() {
       aria-label='Toggle theme'
     >
       {theme === "dracula" ? (
-        <AiOutlineMoon className='text-4xl' />
+        <AiOutlineMoon className='md:text-4xl text-2xl' />
       ) : (
-        <AiFillMoon className='text-4xl' />
+        <AiFillMoon className='md:text-4xl text-2xl' />
       )}
     </button>
   );
