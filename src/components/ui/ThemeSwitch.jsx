@@ -4,16 +4,15 @@ import { AiFillMoon, AiOutlineMoon } from "react-icons/ai";
 export default function ThemeSwitch() {
   const [theme, setTheme] = useState("");
 
-  // Load saved theme on mount
+  // saved theme Load on mount
   useEffect(() => {
     const savedTheme = localStorage.getItem("localTheme") || "dracula";
     setTheme(savedTheme);
-    document.documentElement.setAttribute("data-theme", savedTheme);
   }, []);
 
-  // Whenever theme changes, update both localStorage and document
+  // onmount and change theme
   useEffect(() => {
-    if (!theme) return; // Skip first render if empty
+    if (!theme) return;
     localStorage.setItem("localTheme", theme);
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);

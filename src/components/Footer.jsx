@@ -7,7 +7,7 @@ import Logo from "./../components/ui/Logo";
 export default function Footer() {
   const date = new Date();
   return (
-    <footer className='py-4 text-base shadow light:border light:border-primary-content glass-effect rounded'>
+    <footer className='py-4 text-base border-t border-primary-content glass-effect rounded'>
       <div className='flex flex-col md:flex-row justify-between'>
         <div className='flex flex-col text-center items-center flex-1'>
           <Logo />
