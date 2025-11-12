@@ -1,5 +1,7 @@
 import { GiBookAura } from "react-icons/gi";
+
 import { NavLink } from "react-router";
+import ThemeSwitch from "./ThemeSwitch";
 export default function Logo() {
   return (
     <NavLink to='/' className='w-20'>
