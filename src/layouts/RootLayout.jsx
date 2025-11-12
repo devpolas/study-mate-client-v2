@@ -7,7 +7,7 @@ export default function RootLayout() {
   return (
     <div className='px-4 sm:px-6 md:px-16'>
       <Navbar />
-      <div className='min-h-[75vh]'>
+      <div className='min-h-[75vh] pb-4'>
         {isPending ? (
           <div className='skeleton h-[75vh] w-full'></div>
         ) : (
