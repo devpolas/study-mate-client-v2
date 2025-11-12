@@ -8,7 +8,7 @@ import SlideCard from "./SlideCard";
 
 export default function ImageSlider() {
   return (
-    <div className='pt-2 relative z-1'>
+    <div className='pt-4 relative z-1'>
       <Swiper
         autoplay={{ delay: 5000, disableOnInteraction: false }}
         slidesPerView={"auto"}

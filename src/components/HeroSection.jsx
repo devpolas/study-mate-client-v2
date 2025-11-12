@@ -1,6 +1,6 @@
 export default function HeroSection() {
   return (
-    <div className='pt-4'>
+    <div className='py-8'>
       <div
         className='hero min-h-[50vh]'
         style={{

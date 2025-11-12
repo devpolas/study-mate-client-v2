@@ -21,7 +21,15 @@ export default function SlideCard() {
           </p>
           <p>
             <span className='flex flex-col sm:flex-row'>
-              <span>Specialization:</span>{" "}
+              <span>Skill: </span>{" "}
+              <span>
+                <strong>Expert</strong>
+              </span>
+            </span>
+          </p>
+          <p>
+            <span className='flex flex-col sm:flex-row'>
+              <span>Specialization: </span>{" "}
               <span>
                 <strong>Mechanical</strong>
               </span>
@@ -29,7 +37,7 @@ export default function SlideCard() {
           </p>
           <p>
             <span className='flex flex-col sm:flex-row'>
-              <span>Location:</span>{" "}
+              <span>Location: </span>{" "}
               <span>
                 <strong>Dhaka, Bangladesh</strong>
               </span>
