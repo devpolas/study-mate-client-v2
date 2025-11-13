@@ -4,23 +4,24 @@ const reviews = [
   {
     name: "Aisha Rahman",
     occupation: "Mathematics Teacher",
-    image: "https://i.ibb.co/profile-example.jpg",
+    image: "https://i.ibb.co.com/KxRQQfSR/reviewer1.webp",
     description: "Aisha explains concepts very clearly and makes learning fun.",
-    time: "2 days ago",
+    time: "2 month ago",
   },
   {
     name: "John Doe",
     occupation: "Physics Professor",
-    image: "https://i.ibb.co/another-profile.jpg",
+    image: "https://i.ibb.co.com/4ZxmMxfj/reviewer2.webp",
     description: "John is very patient and thorough with his explanations.",
-    time: "5 days ago",
+    time: "5 month ago",
   },
   {
-    name: "John Doe",
-    occupation: "Physics Professor",
-    image: "https://i.ibb.co/another-profile.jpg",
-    description: "John is very patient and thorough with his explanations.",
-    time: "5 days ago",
+    name: "Lina Gomez",
+    occupation: "English Teacher",
+    image: "https://i.ibb.co.com/SSFWPrz/reviewer3.webp",
+    description:
+      "Sara connects lessons with nature, making learning memorable.",
+    time: "15 days ago",
   },
 ];
 
