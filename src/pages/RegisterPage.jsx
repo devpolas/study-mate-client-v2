@@ -3,19 +3,31 @@ import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
 import SignWith from "../components/SignWith";
 import { RiQuestionLine } from "react-icons/ri";
+import useAuthContext from "../context/useAuthContext";
+import { uploadImageToImgBB } from "../http/imageUpload";
+import {
+  emailValidation,
+  nameValidation,
+  passwordValidator,
+} from "../utils/validator";
+
+const ratingAverage = Number(Math.random() * 4 + 1).toFixed(1);
+const imageSize = 2 * 1024 * 1024;
 
 export default function RegisterPage() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [pickedImage, setPickedImage] = useState(null);
   const [imageError, setImageError] = useState("");
+  const [signupError, setSignupError] = useState({});
+  const { signup, isError, isLoading, setIsLoading, setIsError, socialLogin } =
+    useAuthContext();
 
   // handel the image picker
   function handleImageChange(e) {
     setImageError("");
     setPickedImage(null);
 
-    const imageSize = 2 * 1024 * 1024;
     const image = e.target.files[0];
     if (!image) {
       setPickedImage(null);
@@ -35,14 +47,66 @@ export default function RegisterPage() {
     fileReader.readAsDataURL(image);
   }
 
+  async function handelSubmit(e) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const data = Object.fromEntries(formData);
+    const { name, email, password, passwordConfirm, image } = data;
+    const errors = {};
+
+    const validName = nameValidation(name);
+    const correctEmail = emailValidation(email);
+    const correctPassword = passwordValidator(password);
+
+    if (validName !== true) errors.name = validName;
+    if (correctEmail !== true) errors.email = correctEmail;
+    if (correctPassword !== true) errors.password = correctPassword;
+    if (password !== passwordConfirm)
+      errors.passwordConfirm = "Password doesn't match!";
+
+    if (image.size > imageSize) {
+      errors.image = "Invalid Image Size!";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setSignupError((preData) => ({ ...preData, errors }));
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setSignupError({});
+      const url = await uploadImageToImgBB(name, image);
+      await signup({
+        name,
+        email,
+        password,
+        passwordConfirm,
+        image: url,
+        ratingAverage,
+      });
+    } catch (error) {
+      const msg = error?.message || error?.status || "An occurred Error!";
+      setIsError(msg);
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
-    <form className='flex justify-center items-center '>
+    <form
+      onSubmit={(e) => handelSubmit(e)}
+      className='flex justify-center items-center '
+    >
       <div>
         <fieldset className='fieldset bg-base-200 border-base-300 shadow-md rounded-box w-xs border p-4'>
-          <legend className='fieldset-legend text-lg'>Signup</legend>
+          <legend className='fieldset-legend text-lg'>
+            {isLoading ? "Processing....." : "Signup"}
+          </legend>
 
           <label className='label text-xs text-center pt-2 text-red-700'>
-            {/* {state?.errors?.general} */}
+            {isError ? isError : ""}
           </label>
 
           <div className='flex flex-row gap-1 items-center'>
@@ -64,7 +128,7 @@ export default function RegisterPage() {
             placeholder='Enter Your Full Name'
           />
           <label className='label text-xs text-red-700'>
-            {/* {state?.errors?.name} */}
+            {signupError?.errors?.name}
           </label>
 
           <label htmlFor='email' className='label text-sm'>
@@ -79,7 +143,7 @@ export default function RegisterPage() {
           />
 
           <label className='label text-xs text-red-700'>
-            {/* {state?.errors?.email} */}
+            {signupError?.errors?.email}
           </label>
 
           <div className='flex flex-row gap-1 items-center'>
@@ -113,7 +177,7 @@ export default function RegisterPage() {
           </div>
 
           <label className='label text-xs text-red-700'>
-            {/* {state?.errors?.password} */}
+            {signupError?.errors?.password}
           </label>
 
           <label htmlFor='passwordConfirm' className='label text-sm'>
@@ -137,7 +201,9 @@ export default function RegisterPage() {
               {confirmPasswordVisible ? "Hide" : "Show"}
             </button>
           </div>
-          <label className='label text-xs text-red-700'></label>
+          <label className='label text-xs text-red-700'>
+            {signupError?.errors?.passwordConfirm}
+          </label>
 
           <label htmlFor='image' className='label text-sm'>
             Pick a image
@@ -166,6 +232,7 @@ export default function RegisterPage() {
 
           <button
             type='submit'
+            disabled={isLoading}
             className='btn btn-secondary btn-outline mt-4 shadow'
           >
             Signup
@@ -181,7 +248,9 @@ export default function RegisterPage() {
             </Link>
           </p>
 
-          <SignWith icon={<FcGoogle />}>Sign up with Google</SignWith>
+          <SignWith onClick={() => socialLogin()} icon={<FcGoogle />}>
+            Sign up with Google
+          </SignWith>
         </fieldset>
       </div>
     </form>
