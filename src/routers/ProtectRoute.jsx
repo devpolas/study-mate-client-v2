@@ -1,15 +1,24 @@
 import { Navigate, useLocation } from "react-router";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 
 export default function ProtectRoute({ children }) {
   const location = useLocation();
-  let token;
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    token = localStorage.getItem("token");
+    const storedToken = localStorage.getItem("token");
+    setToken(storedToken);
+    setLoading(false);
   }, []);
 
-  if (token || token !== null) {
+  if (loading) {
+    return null;
+  }
+
+  if (token) {
     return children;
   }
-  return <Navigate state={location?.pathname} to='/login' />;
+
+  return <Navigate to='/login' state={{ from: location }} replace />;
 }
