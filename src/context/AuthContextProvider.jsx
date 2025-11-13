@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import AuthContext from "./Context";
-import api from "./../utils/api";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { appAuth } from "./../features/firebase.config";
+import axios from "axios";
+
+const BASE_URL = "https://study-mate-api.vercel.app/api/v1";
 
 export default function AuthContextProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -19,7 +21,7 @@ export default function AuthContextProvider({ children }) {
     setIsLoading(true);
     setIsError("");
     try {
-      const response = await api.post("/users/signup", {
+      const response = await axios.post(`${BASE_URL}/users/signup`, {
         name,
         email,
         password,
@@ -39,7 +41,7 @@ export default function AuthContextProvider({ children }) {
     setIsLoading(true);
     setIsError("");
     try {
-      const response = await api.post("/users/login", {
+      const response = await axios.post(`${BASE_URL}/users/login`, {
         email,
         password,
       });
@@ -65,7 +67,7 @@ export default function AuthContextProvider({ children }) {
     try {
       const credential = await signInWithGoogle();
       const idToken = await credential.user.getIdToken();
-      const response = await api.post("/users/social-login", {
+      const response = await axios.post(`${BASE_URL}/users/social-login`, {
         googleAuthToken: idToken,
       });
       localStorage.setItem("token", response.data?.token);
@@ -83,7 +85,7 @@ export default function AuthContextProvider({ children }) {
     setIsLoading(true);
     setIsError("");
     try {
-      await api.post("/users/logout");
+      await axios.post("`${BASE_URL}/users/logout`");
       localStorage.removeItem("token");
       setToken(null);
     } catch (error) {
