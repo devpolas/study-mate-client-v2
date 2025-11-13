@@ -75,6 +75,7 @@ export default function RegisterPage() {
 
     try {
       setIsLoading(true);
+      setIsError("");
       setSignupError({});
       const url = await uploadImageToImgBB(name, image);
       await signup({

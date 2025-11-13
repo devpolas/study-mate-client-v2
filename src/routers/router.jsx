@@ -9,6 +9,7 @@ import PartnerDetailsPage from "../pages/PartnerDetailsPage";
 import ProtectRoute from "./ProtectRoute";
 import PublicRoute from "./PublicRoute";
 import ForgetPassword from "../pages/ForgetPassword";
+import { getMe, getSingleUser } from "../utils/dataLoader";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
       { path: "find-partner", Component: FindPartnerPage },
       {
         path: "partner/:id",
+        loader: async ({ params }) => await getSingleUser(params),
         element: (
           <ProtectRoute>
             <PartnerDetailsPage />
@@ -37,6 +39,7 @@ const router = createBrowserRouter([
       },
       {
         path: "profile",
+        loader: getMe,
         element: (
           <ProtectRoute>
             <ProfilePage />

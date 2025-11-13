@@ -5,7 +5,7 @@ export default function PublicRoute({ children }) {
   const location = useLocation();
   const { token } = useAuthContext();
 
-  if (!token) {
+  if (!token || token === null) {
     return children;
   }
 
