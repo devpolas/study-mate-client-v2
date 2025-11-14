@@ -1,4 +1,7 @@
+import { Link } from "react-router";
+
 export default function MateIntro({
+  _id,
   image,
   name,
   subject,
@@ -38,7 +41,9 @@ export default function MateIntro({
           <span className='text-xs text-gray-400'>No rating yet</span>
         )}
         <div className='card-actions pt-2'>
-          <button className='btn btn-primary'>View Profile</button>
+          <Link to={`/partner/${_id}`} className='btn btn-primary'>
+            View Profile
+          </Link>
         </div>
       </div>
     </div>

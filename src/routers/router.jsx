@@ -40,12 +40,13 @@ const router = createBrowserRouter([
       { path: "forget-password", Component: ForgetPassword },
       {
         path: "find-partner",
+        id: "mates",
         Component: FindPartnerPage,
         loader: getAllUsers,
       },
       {
         path: "partner/:id",
-        loader: async ({ params }) => await getSingleUser(params),
+        loader: async ({ params }) => await getSingleUser(params.id),
         element: (
           <ProtectRoute>
             <PartnerDetailsPage />
