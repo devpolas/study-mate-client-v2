@@ -17,18 +17,17 @@ export default function AuthContextProvider({ children }) {
     if (storedToken) setToken(storedToken);
   }, []);
 
-  const signup = async (name, email, password, confirmPassword) => {
+  const signup = async (signupObject) => {
     setIsLoading(true);
     setIsError("");
     try {
-      const response = await axios.post(`${BASE_URL}/users/signup`, {
-        name,
-        email,
-        password,
-        confirmPassword,
-      });
+      const response = await axios.post(
+        `${BASE_URL}/users/signup`,
+        signupObject
+      );
       localStorage.setItem("token", response.data?.token);
       setToken(response.data?.token);
+      return;
     } catch (error) {
       const errorMsg =
         error.response?.data?.message || error.message || "An error occurred.";
@@ -47,6 +46,7 @@ export default function AuthContextProvider({ children }) {
       });
       localStorage.setItem("token", response.data?.token);
       setToken(response.data?.token);
+      return;
     } catch (error) {
       const errorMsg =
         error.response?.data?.message || error.message || "An error occurred.";
@@ -72,6 +72,7 @@ export default function AuthContextProvider({ children }) {
       });
       localStorage.setItem("token", response.data?.token);
       setToken(response.data?.token);
+      return;
     } catch (error) {
       const errorMsg =
         error.response?.data?.message || error.message || "An error occurred.";
@@ -85,9 +86,9 @@ export default function AuthContextProvider({ children }) {
     setIsLoading(true);
     setIsError("");
     try {
-      await axios.post("`${BASE_URL}/users/logout`");
       localStorage.removeItem("token");
       setToken(null);
+      return;
     } catch (error) {
       const errorMsg =
         error.response?.data?.message || error.message || "An error occurred.";

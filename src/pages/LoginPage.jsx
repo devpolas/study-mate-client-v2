@@ -21,13 +21,28 @@ export default function LoginPage() {
       setIsLoading(true);
       setIsError("");
       await login(data?.email, data?.password);
-      navigate(location?.state || "/");
+      if (!isError) {
+        navigate(location?.state || "/");
+      }
     } catch (error) {
       const msg = error?.message || error?.status || "An occurred Error!";
       setIsError(msg);
       setIsLoading(false);
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function handelSocialLogin() {
+    setIsError("");
+    try {
+      await socialLogin();
+      if (!isError) {
+        navigate(location?.state || "/");
+      }
+    } catch (error) {
+      const msg = error?.message || error?.status || "An occurred Error!";
+      setIsError(msg);
     }
   }
 
@@ -105,7 +120,7 @@ export default function LoginPage() {
                 Signup
               </Link>{" "}
             </p>
-            <SignWith onClick={() => socialLogin()} icon={<FcGoogle />}>
+            <SignWith onClick={() => handelSocialLogin()} icon={<FcGoogle />}>
               Sign in with Google
             </SignWith>
           </fieldset>

@@ -1,8 +1,9 @@
 import { Navigate, useLocation } from "react-router";
+import useAuthContext from "../context/useAuthContext";
 
 export default function PublicRoute({ children }) {
   const location = useLocation();
-  const token = localStorage.getItem("token");
+  const { token } = useAuthContext();
 
   if (!token) {
     return children;
