@@ -53,6 +53,7 @@ export default function ProfileInfo({ user }) {
       setIsError(msg);
     } finally {
       setIsLoading(false);
+      setIsError("");
     }
   }
 
