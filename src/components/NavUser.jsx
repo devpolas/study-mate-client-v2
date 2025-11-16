@@ -2,20 +2,19 @@ import { Link, useNavigate } from "react-router";
 import useAuthContext from "../context/useAuthContext";
 
 export default function NavUser() {
-  const { logout } = useAuthContext();
+  const { logout, authUser } = useAuthContext();
   const navigate = useNavigate();
 
   async function handelLogout() {
     await logout();
     navigate("/login");
   }
-
   return (
     <div className='dropdown dropdown-end relative'>
       <div tabIndex={0} role='button'>
         <img
           className='w-12 h-12 mr-4 rounded-full border border-primary cursor-pointer'
-          src='https://i.ibb.co.com/nT9TXxz/Polas-CB.jpg'
+          src={authUser?.image}
           alt='Profile Picture'
         />
       </div>

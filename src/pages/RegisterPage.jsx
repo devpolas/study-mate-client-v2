@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router";
 import { FcGoogle } from "react-icons/fc";
+import { RiQuestionLine } from "react-icons/ri";
 import { useState } from "react";
 import SignWith from "../components/SignWith";
-import { RiQuestionLine } from "react-icons/ri";
 import useAuthContext from "../context/useAuthContext";
 import { uploadImageToImgBB } from "../http/imageUpload";
 import {
@@ -12,114 +12,110 @@ import {
 } from "../utils/validator";
 
 const ratingAverage = Number(Math.random() * 4 + 1).toFixed(1);
-const imageSize = 2 * 1024 * 1024;
+const IMAGE_SIZE_LIMIT = 2 * 1024 * 1024;
 
 export default function RegisterPage() {
+  const navigate = useNavigate();
+  const {
+    signup,
+    isError,
+    setIsError,
+    setIsSubmitting,
+    isSubmitting,
+    socialLogin,
+  } = useAuthContext();
+
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [pickedImage, setPickedImage] = useState(null);
   const [imageError, setImageError] = useState("");
-  const [signupError, setSignupError] = useState({});
-  const { signup, isError, isLoading, setIsLoading, setIsError, socialLogin } =
-    useAuthContext();
+  const [formErrors, setFormErrors] = useState({});
 
-  const navigate = useNavigate();
-
-  // handel the image picker
+  // Handle image selection
   function handleImageChange(e) {
     setImageError("");
-    setPickedImage(null);
+    const file = e.target.files[0];
+    if (!file) return setPickedImage(null);
 
-    const image = e.target.files[0];
-    if (!image) {
+    if (file.size > IMAGE_SIZE_LIMIT) {
+      setImageError("Image size must be less than 2MB.");
       setPickedImage(null);
       return;
     }
-    if (image.size > imageSize) {
-      setImageError("Your Picked Image Incorrect Size!");
-      setPickedImage("");
-      return;
-    }
 
-    const fileReader = new FileReader();
-    fileReader.onload = () => {
-      setPickedImage(fileReader.result);
-    };
-
-    fileReader.readAsDataURL(image);
+    const reader = new FileReader();
+    reader.onload = () => setPickedImage(reader.result);
+    reader.readAsDataURL(file);
   }
 
-  async function handelSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+    setFormErrors({});
+    setIsError("");
+
     const formData = new FormData(e.currentTarget);
-    const data = Object.fromEntries(formData);
-    const { name, email, password, passwordConfirm, image } = data;
+    const { name, email, password, passwordConfirm, image } =
+      Object.fromEntries(formData);
     const errors = {};
 
     const validName = nameValidation(name);
-    const correctEmail = emailValidation(email);
-    const correctPassword = passwordValidator(password);
+    const validEmail = emailValidation(email);
+    const validPassword = passwordValidator(password);
 
     if (validName !== true) errors.name = validName;
-    if (correctEmail !== true) errors.email = correctEmail;
-    if (correctPassword !== true) errors.password = correctPassword;
+    if (validEmail !== true) errors.email = validEmail;
+    if (validPassword !== true) errors.password = validPassword;
     if (password !== passwordConfirm)
-      errors.passwordConfirm = "Password doesn't match!";
-
-    if (image.size > imageSize) {
-      errors.image = "Invalid Image Size!";
-    }
+      errors.passwordConfirm = "Passwords do not match.";
+    if (!image || image.size > IMAGE_SIZE_LIMIT)
+      errors.image = "Image is required and must be <2MB.";
 
     if (Object.keys(errors).length > 0) {
-      setSignupError((preData) => ({ ...preData, errors }));
+      setFormErrors(errors);
       return;
     }
 
     try {
-      setIsLoading(true);
-      setIsError("");
-      setSignupError({});
-      const url = await uploadImageToImgBB(name, image);
+      setIsSubmitting(true);
+      const imageUrl = await uploadImageToImgBB(name, image);
       await signup({
         name,
         email,
         password,
         passwordConfirm,
-        image: url,
+        image: imageUrl,
         ratingAverage,
       });
-    } catch (error) {
-      const msg = error?.message || error?.status || "An occurred Error!";
-      setIsError(msg);
-      setIsLoading(false);
+      navigate("/");
+      setIsSubmitting(false);
+    } catch (err) {
+      setIsError(err?.message || "An occurred Error!");
+      setIsSubmitting(false);
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   }
 
   return (
-    <form
-      onSubmit={(e) => handelSubmit(e)}
-      className='flex justify-center items-center '
-    >
+    <form onSubmit={handleSubmit} className='flex justify-center items-center'>
       <div>
         <fieldset className='fieldset bg-base-200 border-base-300 shadow-md rounded-box w-xs border p-4'>
           <legend className='fieldset-legend text-lg'>
-            {isLoading ? "Processing....." : "Signup"}
+            {isSubmitting ? "Processing..." : "Signup"}
           </legend>
 
-          <label className='label text-xs text-center pt-2 text-red-700'>
-            {isError ? isError : ""}
-          </label>
+          {isError && (
+            <p className='label text-xs text-center pt-2 text-red-700'>
+              {isError}
+            </p>
+          )}
 
+          {/* Full Name */}
           <div className='flex flex-row gap-1 items-center'>
-            <label htmlFor='password' className='label text-sm'>
+            <label htmlFor='name' className='label text-sm'>
               Full Name
             </label>
-            <div
-              className='tooltip tooltip-bottom'
-              data-tip='Full Name at least 3 characters or less than 30 characters!'
-            >
+            <div className='tooltip tooltip-bottom' data-tip='3-30 characters'>
               <RiQuestionLine className='hover:cursor-pointer text-sm hover:text-green-700' />
             </div>
           </div>
@@ -130,10 +126,11 @@ export default function RegisterPage() {
             className='input text-sm'
             placeholder='Enter Your Full Name'
           />
-          <label className='label text-xs text-red-700'>
-            {signupError?.errors?.name}
-          </label>
+          {formErrors.name && (
+            <p className='label text-xs text-red-700'>{formErrors.name}</p>
+          )}
 
+          {/* Email */}
           <label htmlFor='email' className='label text-sm'>
             Email
           </label>
@@ -144,18 +141,18 @@ export default function RegisterPage() {
             className='input text-sm'
             placeholder='Enter Your Email'
           />
+          {formErrors.email && (
+            <p className='label text-xs text-red-700'>{formErrors.email}</p>
+          )}
 
-          <label className='label text-xs text-red-700'>
-            {signupError?.errors?.email}
-          </label>
-
+          {/* Password */}
           <div className='flex flex-row gap-1 items-center'>
             <label htmlFor='password' className='label text-sm'>
               Password
             </label>
             <div
               className='tooltip tooltip-bottom'
-              data-tip='Password must be contain an Uppercase and a Lowercase letter at least 6 and max 30 characters!'
+              data-tip='6-30 chars with uppercase/lowercase'
             >
               <RiQuestionLine className='hover:cursor-pointer text-sm hover:text-green-700' />
             </div>
@@ -164,13 +161,13 @@ export default function RegisterPage() {
             <input
               required
               name='password'
-              type={`${passwordVisible ? "text" : "password"}`}
+              type={passwordVisible ? "text" : "password"}
               className='input text-sm w-11/12'
-              placeholder='Enter Your Password'
+              placeholder='Enter Password'
             />
             <button
               type='button'
-              onClick={() => setPasswordVisible((pre) => !pre)}
+              onClick={() => setPasswordVisible((p) => !p)}
               className={`btn ${
                 passwordVisible ? "text-red-600" : "text-green-700"
               }`}
@@ -178,11 +175,11 @@ export default function RegisterPage() {
               {passwordVisible ? "Hide" : "Show"}
             </button>
           </div>
+          {formErrors.password && (
+            <p className='label text-xs text-red-700'>{formErrors.password}</p>
+          )}
 
-          <label className='label text-xs text-red-700'>
-            {signupError?.errors?.password}
-          </label>
-
+          {/* Confirm Password */}
           <label htmlFor='passwordConfirm' className='label text-sm'>
             Confirm Password
           </label>
@@ -190,13 +187,13 @@ export default function RegisterPage() {
             <input
               required
               name='passwordConfirm'
-              type={`${confirmPasswordVisible ? "text" : "password"}`}
+              type={confirmPasswordVisible ? "text" : "password"}
               className='input text-sm w-11/12'
-              placeholder='Confirm Your Password'
+              placeholder='Confirm Password'
             />
             <button
               type='button'
-              onClick={() => setConfirmPasswordVisible((pre) => !pre)}
+              onClick={() => setConfirmPasswordVisible((p) => !p)}
               className={`btn ${
                 confirmPasswordVisible ? "text-red-600" : "text-green-700"
               }`}
@@ -204,12 +201,15 @@ export default function RegisterPage() {
               {confirmPasswordVisible ? "Hide" : "Show"}
             </button>
           </div>
-          <label className='label text-xs text-red-700'>
-            {signupError?.errors?.passwordConfirm}
-          </label>
+          {formErrors.passwordConfirm && (
+            <p className='label text-xs text-red-700'>
+              {formErrors.passwordConfirm}
+            </p>
+          )}
 
+          {/* Image */}
           <label htmlFor='image' className='label text-sm'>
-            Pick a image
+            Pick a profile image
           </label>
           <input
             required
@@ -219,37 +219,31 @@ export default function RegisterPage() {
             className='file-input'
           />
           <label className='label text-sm'>Max size 2MB</label>
-          <label className='label text-sm text-red-700'>
-            {imageError ? imageError : ""}
-          </label>
-
-          {pickedImage ? (
+          {imageError && (
+            <p className='label text-sm text-red-700'>{imageError}</p>
+          )}
+          {pickedImage && (
             <img
-              className='w-20 h-20 p-1 border-2 border-gray-300 rounded-sm'
               src={pickedImage}
-              alt='user input profile picture'
+              alt='preview'
+              className='w-20 h-20 p-1 border-2 border-gray-300 rounded-sm'
             />
-          ) : (
-            ""
           )}
 
           <button
             type='submit'
-            disabled={isLoading}
+            disabled={isSubmitting}
             className='btn btn-secondary btn-outline mt-4 shadow'
           >
             Signup
           </button>
 
           <p className='text-sm pt-2 text-center'>
-            You have already an account?
+            Already have an account?
             <button
               type='button'
               className='text-sm text-primary font-semibold ml-1 cursor-pointer'
-              onClick={() => {
-                navigate("/login", { replace: true });
-                setIsError("");
-              }}
+              onClick={() => navigate("/login")}
             >
               Login
             </button>

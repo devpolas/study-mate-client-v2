@@ -1,115 +1,145 @@
 import { useEffect, useState } from "react";
-import AuthContext from "./CreateAuthContext";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { appAuth } from "./../features/firebase.config";
-import axios from "axios";
-
-const BASE_URL = "https://study-mate-api.vercel.app/api/v1";
+import { appAuth } from "../features/firebase.config";
+import AuthContext from "./CreateAuthContext";
+import api from "../utils/api";
 
 export default function AuthContextProvider({ children }) {
-  const [isLoading, setIsLoading] = useState(false);
+  // Initial auth check
+  const [isLoading, setIsLoading] = useState(true);
+  // login/signup actions
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isError, setIsError] = useState("");
   const [token, setToken] = useState(localStorage.getItem("token") || null);
+  const [authUser, setAuthUser] = useState(null);
   const googleAuthProvider = new GoogleAuthProvider();
 
+  // --- Initial auth check ---
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) setToken(storedToken);
+    const checkAuth = async () => {
+      const storedToken = localStorage.getItem("token");
+      if (!storedToken) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        // backend returns user info
+        const response = await api.get("/users/me");
+        setToken(storedToken);
+        setAuthUser(response.data.data.user);
+      } catch (err) {
+        console.log("Auth check failed:", err);
+        localStorage.removeItem("token");
+        setToken(null);
+        setAuthUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
   }, []);
 
+  // --- Signup ---
   const signup = async (signupObject) => {
-    setIsLoading(true);
+    setIsSubmitting(true);
     setIsError("");
     try {
-      const response = await axios.post(
-        `${BASE_URL}/users/signup`,
-        signupObject
-      );
+      const response = await api.post(`/users/signup`, signupObject);
       localStorage.setItem("token", response.data?.token);
       setToken(response.data?.token);
-      return;
+      setAuthUser(response.data?.user);
+      return true;
     } catch (error) {
-      const errorMsg =
-        error.response?.data?.message || error.message || "An error occurred.";
-      setIsError(errorMsg);
+      setIsError(
+        error.response?.data?.message || error.message || "An error occurred."
+      );
+      return false;
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
+
+  // --- Login ---
   const login = async (email, password) => {
-    setIsLoading(true);
+    setIsSubmitting(true);
     setIsError("");
     try {
-      const response = await axios.post(`${BASE_URL}/users/login`, {
+      const response = await api.post(`/users/login`, {
         email,
         password,
       });
       localStorage.setItem("token", response.data?.token);
       setToken(response.data?.token);
+      setAuthUser(response.data?.user);
       return true;
     } catch (error) {
-      const errorMsg =
-        error.response?.data?.message || error.message || "An error occurred.";
-      setIsError(errorMsg);
+      setIsError(
+        error.response?.data?.message || error.message || "An error occurred."
+      );
       return false;
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
-  const signInWithGoogle = async () => {
-    setIsLoading(true);
-    return signInWithPopup(appAuth, googleAuthProvider);
-  };
-
+  // --- Social login (Google) ---
   const socialLogin = async () => {
-    setIsLoading(true);
+    setIsSubmitting(true);
     setIsError("");
     try {
-      const credential = await signInWithGoogle();
+      const credential = await signInWithPopup(appAuth, googleAuthProvider);
       const idToken = await credential.user.getIdToken();
-      const response = await axios.post(`${BASE_URL}/users/social-login`, {
+
+      const response = await api.post(`/users/social-login`, {
         googleAuthToken: idToken,
       });
+
       localStorage.setItem("token", response.data?.token);
       setToken(response.data?.token);
+      setAuthUser(response.data?.user);
       return true;
     } catch (error) {
-      const errorMsg =
-        error.response?.data?.message || error.message || "An error occurred.";
-      setIsError(errorMsg);
+      setIsError(
+        error.response?.data?.message || error.message || "An error occurred."
+      );
       return false;
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
+  // --- Logout ---
   const logout = async () => {
-    setIsLoading(true);
+    setIsSubmitting(true);
     setIsError("");
     try {
       localStorage.removeItem("token");
       setToken(null);
-      return;
+      setAuthUser(null);
     } catch (error) {
-      const errorMsg =
-        error.response?.data?.message || error.message || "An error occurred.";
-      setIsError(errorMsg);
+      setIsError(
+        error.response?.data?.message || error.message || "An error occurred."
+      );
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   const value = {
     signup,
-    socialLogin,
     login,
+    socialLogin,
     logout,
+    authUser,
+    token,
     isLoading,
-    setIsLoading,
+    isSubmitting,
+    setIsSubmitting,
     isError,
     setIsError,
-    token,
   };
+
   return <AuthContext value={value}>{children}</AuthContext>;
 }
