@@ -1,15 +1,18 @@
 import { useLoaderData } from "react-router";
 import MateIntro from "./../components/MateIntro";
 import { useEffect, useState } from "react";
+import useAuthContext from "../context/useAuthContext";
 
 export default function FindPartnerPage() {
   const [mate, setMate] = useState([]);
   const [sortBy, setSortBy] = useState("");
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState("");
+  const { authUser } = useAuthContext();
 
   const allUsers = useLoaderData();
   const usersData = allUsers?.data?.users || [];
+  const preventMe = usersData.filter((el) => el?._id !== authUser?._id);
 
   // api search end point
   //  *https://study-mate-api.vercel.app/api/v1/users?slug=query
@@ -22,9 +25,9 @@ export default function FindPartnerPage() {
 
     const delay = setTimeout(() => {
       if (!query) {
-        setMate(usersData);
+        setMate(preventMe);
       } else {
-        const result = usersData.filter((item) =>
+        const result = preventMe.filter((item) =>
           item.name.toLowerCase().includes(query.toLowerCase())
         );
         setMate(result);
@@ -42,7 +45,7 @@ export default function FindPartnerPage() {
     setLoading(true);
 
     const delay = setTimeout(() => {
-      const sorted = [...usersData];
+      const sorted = [...preventMe];
 
       if (sortBy === "name") {
         sorted.sort((a, b) => a.name.localeCompare(b.name));
