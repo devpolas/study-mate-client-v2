@@ -1,16 +1,92 @@
-# React + Vite
+# Study Mate
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> A modern study helper app built with React, Vite, and TailwindCSS.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Table of Contents
 
-## React Compiler
+- [Study Mate](#study-mate)
+  - [Table of Contents](#table-of-contents)
+  - [About](#about)
+  - [Features](#features)
+  - [Tech Stack](#tech-stack)
+  - [Getting Started](#getting-started)
+    - [1. Clone the repository](#1-clone-the-repository)
+  - [available-scripts](#available-scripts)
+  - [license](#license)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## About
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Study Mate is a web application designed to help students organize, track, and enhance their study sessions. It leverages modern web technologies for fast performance, responsiveness, and smooth UI/UX.
+
+---
+
+## Features
+
+- Interactive and responsive UI with **TailwindCSS** and **DaisyUI**
+- Real-time data handling with **Firebase**
+- Authentication with **JWT** and **bcryptjs**
+- Graphical data representation using **Recharts**
+- Smooth animations using **Motion**
+- Carousel functionality via **Swiper**
+- Notifications with **React Toastify**
+
+---
+
+## Tech Stack
+
+- **Frontend:** React, Vite, TailwindCSS, DaisyUI
+- **State Management:** React Hooks
+- **Routing:** React Router
+- **Backend / API:** Express, Firebase, MongoDB, Axios
+- **Authentication:** JWT, bcryptjs
+- **Linting & Formatting:** ESLint
+
+---
+
+## Getting Started
+
+Follow these steps to run the project locally:
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/yourusername/study-mate.git
+cd study-mate
+```
+
+## available-scripts
+
+2. Install dependencies
+
+```
+npm install
+
+```
+
+3. Start development server
+
+```
+npm run dev
+
+Your app will be available at http://localhost:5173
+ by default.
+```
+
+4. Build for production
+
+```
+npm run build
+```
+
+## license
+
+License
+
+```
+This project is licensed under the MIT License. See LICENSE
+ for details.
+```
