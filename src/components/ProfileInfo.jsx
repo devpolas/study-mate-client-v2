@@ -42,7 +42,7 @@ export default function ProfileInfo({ user }) {
       }
       const result = await updateMe({
         name,
-        image: url,
+        profileImage: url || user?.image,
         subject,
         studyMode,
         availability,
