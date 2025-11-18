@@ -3,12 +3,11 @@ import ProfileInfoItem from "./ProfileInfoItem";
 import ProfileInfoDropDownItem from "./ProfileInfoDropDownItem";
 import useUserContext from "./../context/useUserContext";
 import { uploadImageToImgBB } from "../http/imageUpload";
-import { useNavigate } from "react-router";
+import { redirect } from "react-router";
 import { toast } from "react-toastify";
 
 export default function ProfileInfo({ user }) {
   const [isClick, setIsClick] = useState(false);
-  const navigate = useNavigate();
 
   const [value, setValue] = useState({
     name: user?.name || "",
@@ -52,7 +51,7 @@ export default function ProfileInfo({ user }) {
       if (result) {
         toast.success("successfully updated!");
         setIsClick(false);
-        navigate("/profile", { replace: true });
+        redirect("/profile");
       }
     } catch (error) {
       toast.error("fail to update!");
