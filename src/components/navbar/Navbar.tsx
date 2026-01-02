@@ -1,17 +1,29 @@
 import { Link } from "react-router";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, House, Code, Book, Baby, Presentation } from "lucide-react";
+import {
+  Menu,
+  X,
+  House,
+  SquareUserRound,
+  Users,
+  UserRoundSearch,
+  SquaresExclude,
+  LogOut,
+  AtSign,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import Logo from "../logo/Logo";
+import ThemeToggle from "../theme/ThemeToggle";
 
 export default function Navbar() {
   const menuItems = [
-    { name: "Home", href: "/", icon: <House /> },
-    { name: "Skills", href: "/#skills", icon: <Code /> },
-    { name: "Projects", href: "/projects", icon: <Presentation /> },
-    { name: "Blog", href: "/blog", icon: <Book /> },
-    { name: "About", href: "/about", icon: <Baby /> },
+    { name: "Home", href: "/", icon: <House size={16} /> },
+    { name: "Partners", href: "/#skills", icon: <UserRoundSearch size={16} /> },
+    { name: "Profile", href: "/projects", icon: <SquareUserRound size={16} /> },
+    { name: "Friends", href: "/blog", icon: <Users size={16} /> },
+    { name: "Contact", href: "/about", icon: <AtSign size={16} /> },
+    { name: "About", href: "/about", icon: <SquaresExclude size={16} /> },
   ];
 
   const [show, setShow] = useState(true);
@@ -41,7 +53,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <div className='top-0 left-0 z-999 fixed shadow-xs backdrop-blur-xs border-accent border-b w-full'>
+    <div className='top-0 left-0 z-50 fixed shadow-xs backdrop-blur-xs border-accent border-b w-full'>
       <AnimatePresence>
         {show && (
           <motion.div
@@ -51,11 +63,11 @@ export default function Navbar() {
             transition={{ duration: 0.6 }}
           >
             <div className='mx-auto p-3 max-w-11/12'>
-              <div className='flex justify-between font-semibold text-lg'>
+              <div className='flex justify-between items-center font-semibold text-lg'>
                 <div className='flex flex-row items-center gap-1'>
                   <div
                     onClick={() => setMobileMenuOpen((pre) => !pre)}
-                    className='md:hidden'
+                    className='lg:hidden'
                   >
                     <AnimatePresence mode='wait'>
                       {isMobileMenuOpen ? (
@@ -91,7 +103,7 @@ export default function Navbar() {
                       animate={{ x: 0, opacity: 1 }}
                       exit={{ x: -100, opacity: 0 }}
                       transition={{ duration: 0.3 }}
-                      className='absolute flex flex-col gap-4 bg-background backdrop-blur-md mt-12 px-10 py-4 border border-accent rounded-md'
+                      className='top-15 absolute flex flex-col gap-4 bg-background backdrop-blur-md px-10 py-4 border border-accent rounded-md'
                     >
                       {menuItems.map((item) => (
                         <Link
@@ -109,7 +121,7 @@ export default function Navbar() {
                   )}
                 </AnimatePresence>
 
-                <div className='hidden md:flex flex-row gap-4 lg:gap-8 xl:gap-10 text-lg'>
+                <div className='hidden lg:flex flex-row gap-4 lg:gap-8 xl:gap-10 text-lg'>
                   {menuItems.map((item) => (
                     <Link
                       key={item.name}
@@ -123,15 +135,18 @@ export default function Navbar() {
                     </Link>
                   ))}
                 </div>
-                <Link to='/#contact'>
+                <div className='flex flex-row gap-2'>
                   <Button
-                    size='default'
-                    className='font-semibold text-sm md:text-lg hover:cursor-pointer'
-                    variant='outline'
+                    size='icon-sm'
+                    className='font-semibold text-sm hover:cursor-pointer'
+                    variant='destructive'
                   >
-                    Let&apos;s Talk
+                    <LogOut size={16} />
                   </Button>
-                </Link>
+                  <Button size='icon-sm'>
+                    <ThemeToggle />
+                  </Button>
+                </div>
               </div>
             </div>
           </motion.div>
