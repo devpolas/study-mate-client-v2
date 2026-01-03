@@ -2,9 +2,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigate, Outlet, useLocation } from "react-router";
 
 export default function AuthLayout() {
-  const { auth } = useAuth();
+  const {
+    auth: { isAuthenticated },
+  } = useAuth();
 
-  const { isAuthenticated } = auth;
   const location = useLocation();
 
   if (!isAuthenticated) {

@@ -13,7 +13,6 @@ import Logo from "../logo/Logo";
 import ThemeToggle from "../theme/ThemeToggle";
 import NavAuthButtons from "./nav/NavAuthButtons";
 import NavUser from "./nav-user/NavUser";
-import DefaultNavLink from "./nav/DefaultNavLink";
 import { useAuth } from "@/hooks/useAuth";
 import DesktopNav from "./DesktopNav";
 import type { MenuItem } from "@/types/auth";
@@ -24,8 +23,9 @@ export default function Navbar() {
   const lastScrollY = useRef(0);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const { auth } = useAuth();
-  const { isAuthenticated } = auth;
+  const {
+    auth: { isAuthenticated },
+  } = useAuth();
 
   const menuItems: MenuItem[] = [
     { name: "Home", href: "/", icon: House },
