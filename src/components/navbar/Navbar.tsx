@@ -62,7 +62,7 @@ export default function Navbar() {
             exit={{ y: -100 }}
             transition={{ duration: 0.6 }}
           >
-            <div className='mx-auto p-3 max-w-11/12'>
+            <div className='mx-auto py-3 max-w-11/12'>
               <div className='flex justify-between items-center font-semibold text-lg'>
                 <div className='flex flex-row items-center gap-1'>
                   <div
@@ -136,13 +136,24 @@ export default function Navbar() {
                   ))}
                 </div>
                 <div className='flex flex-row gap-2'>
-                  <Button
-                    size='icon-sm'
-                    className='font-semibold text-sm hover:cursor-pointer'
-                    variant='destructive'
-                  >
-                    <LogOut size={16} />
-                  </Button>
+                  <div className='flex flex-row gap-2'>
+                    <Link to='/signin'>
+                      <Button
+                        size='default'
+                        className='font-semibold text-sm hover:cursor-pointer'
+                        variant='default'
+                      >
+                        Signin
+                      </Button>
+                    </Link>
+                    <Button
+                      size='default'
+                      className='font-semibold text-sm hover:cursor-pointer'
+                      variant='destructive'
+                    >
+                      Signup
+                    </Button>
+                  </div>
                   <Button size='icon-sm'>
                     <ThemeToggle />
                   </Button>
