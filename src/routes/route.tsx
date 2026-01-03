@@ -32,13 +32,13 @@ const router = createBrowserRouter([
 
       { path: "/participants", Component: ParticipantsPage },
       { path: "/about", Component: AboutPage },
-      { path: "/settings", Component: SettingsPage },
       { path: "/support", Component: SupportPage },
       {
         Component: AuthLayout,
         children: [
           { path: "/profile", Component: ProfilePage },
           { path: "/friends", Component: FriendsPage },
+          { path: "/settings", Component: SettingsPage },
         ],
       },
 
