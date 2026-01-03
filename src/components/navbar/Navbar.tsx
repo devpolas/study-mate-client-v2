@@ -146,17 +146,17 @@ export default function Navbar() {
                         Signin
                       </Button>
                     </Link>
-                    <Button
-                      size='default'
-                      className='font-semibold text-sm hover:cursor-pointer'
-                      variant='destructive'
-                    >
-                      Signup
-                    </Button>
+                    <Link to='/signup'>
+                      <Button
+                        size='default'
+                        className='font-semibold text-sm hover:cursor-pointer'
+                        variant='destructive'
+                      >
+                        Signup
+                      </Button>
+                    </Link>
                   </div>
-                  <Button size='icon-sm'>
-                    <ThemeToggle />
-                  </Button>
+                  <ThemeToggle />
                 </div>
               </div>
             </div>
