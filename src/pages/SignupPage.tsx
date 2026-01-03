@@ -1,4 +1,5 @@
 import DatePicker from "@/components/datapicker/DatePicker";
+import LoginWithGoogle from "@/components/button/social/LoginWithGoogle";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -91,12 +92,10 @@ export default function SignupPage() {
           </form>
         </CardContent>
         <CardFooter className='flex-col gap-2'>
-          <Button type='submit' className='w-full'>
+          <Button type='submit' className='w-full hover:cursor-pointer'>
             Signup
           </Button>
-          <Button variant='outline' className='w-full'>
-            Login with Google
-          </Button>
+          <LoginWithGoogle />
         </CardFooter>
       </Card>
     </div>

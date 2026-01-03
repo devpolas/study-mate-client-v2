@@ -29,10 +29,9 @@ export default function DatePicker() {
   // YYYY-MM-DD (HTML date input format)
   const birthDate =
     year && month && day
-      ? `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(
-          2,
-          "0"
-        )}`
+      ? `${String(year)}-${String(month).padStart(2, "0")}-${String(
+          day
+        ).padStart(2, "0")}`
       : "";
 
   return (

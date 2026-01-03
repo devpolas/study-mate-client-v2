@@ -15,6 +15,7 @@ import {
 import { Button } from "../ui/button";
 import Logo from "../logo/Logo";
 import ThemeToggle from "../theme/ThemeToggle";
+import NavAuthButtons from "../button/nav/NavAuthButtons";
 
 export default function Navbar() {
   const menuItems = [
@@ -136,26 +137,7 @@ export default function Navbar() {
                   ))}
                 </div>
                 <div className='flex flex-row gap-2'>
-                  <div className='flex flex-row gap-2'>
-                    <Link to='/signin'>
-                      <Button
-                        size='default'
-                        className='font-semibold text-sm hover:cursor-pointer'
-                        variant='default'
-                      >
-                        Signin
-                      </Button>
-                    </Link>
-                    <Link to='/signup'>
-                      <Button
-                        size='default'
-                        className='font-semibold text-sm hover:cursor-pointer'
-                        variant='destructive'
-                      >
-                        Signup
-                      </Button>
-                    </Link>
-                  </div>
+                  <NavAuthButtons />
                   <ThemeToggle />
                 </div>
               </div>

@@ -1,3 +1,4 @@
+import LoginWithGoogle from "@/components/button/social/LoginWithGoogle";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -57,12 +58,10 @@ export default function LoginPage() {
           </form>
         </CardContent>
         <CardFooter className='flex-col gap-2'>
-          <Button type='submit' className='w-full'>
+          <Button type='submit' className='w-full hover:cursor-pointer'>
             Login
           </Button>
-          <Button variant='outline' className='w-full'>
-            Login with Google
-          </Button>
+          <LoginWithGoogle />
         </CardFooter>
       </Card>
     </div>
