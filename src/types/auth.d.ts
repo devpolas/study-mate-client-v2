@@ -1,3 +1,4 @@
+import type { LucideIcon } from "lucide-react";
 export type Role = "student" | "tutor" | "admin";
 
 export interface User {
@@ -19,8 +20,9 @@ export interface LoginCredentials {
 export interface SignupCredentials {
   name: string;
   email: string;
-  birthdate: Date;
   password: string;
+  passwordConfirm: string;
+  birthdate: string;
 }
 
 export interface AuthResponse {
@@ -28,10 +30,9 @@ export interface AuthResponse {
   token: string;
 }
 
-export type FormValues = {
+export interface MenuItem {
   name: string;
-  email: string;
-  password: string;
-  passwordConfirm: string;
-  birthdate: string;
-};
+  href: string;
+  icon: LucideIcon;
+  authOnly?: boolean;
+}

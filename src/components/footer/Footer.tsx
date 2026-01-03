@@ -33,7 +33,7 @@ export default function Footer() {
           </nav>
         </div>
 
-        <div className='flex-1 mt-10 md:mt-0'>
+        <div className='flex-1 mt-4 md:mt-0'>
           <h1 className='mb-4 text-xl text-center md:text-start footer-title'>
             Social Links
           </h1>
@@ -53,8 +53,8 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <p className='mt-4 text-sm text-center'>
-        Copyright STUDY MATE &copy; {date.getFullYear()} - All right reserved
+      <p className='mt-4 text-xs lg:text-sm text-center'>
+        Copyright STUDY MATE &copy; {date.getFullYear()}
       </p>
     </footer>
   );

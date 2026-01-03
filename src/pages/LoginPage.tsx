@@ -11,14 +11,33 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link, useLocation } from "react-router";
+import { useAuth } from "@/hooks/useAuth";
+import type { LoginCredentials } from "@/types/auth";
+import { useForm } from "react-hook-form";
+import { Link, useLocation, useNavigate } from "react-router";
 
 export default function LoginPage() {
+  const { login } = useAuth();
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<LoginCredentials>();
+  const navigate = useNavigate();
   const location = useLocation();
-  console.log(location.state);
+
+  async function handleSignin(formData: LoginCredentials) {
+    const response = await login(formData.email, formData.password);
+    if (response.payload) {
+      navigate(location.state?.from || "/");
+    }
+  }
 
   return (
-    <div className='flex justify-end w-full h-full'>
+    <form
+      onSubmit={handleSubmit(handleSignin)}
+      className='flex justify-end w-full h-full'
+    >
       <Card className='flex w-full max-w-sm'>
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
@@ -26,7 +45,7 @@ export default function LoginPage() {
             Enter your email below to login to your account
           </CardDescription>
           <CardAction>
-            <Link to='/signup'>
+            <Link state={location.state?.from || "/"} to='/signup'>
               <Button className='hover:cursor-pointer' variant='link'>
                 Signup
               </Button>
@@ -34,16 +53,19 @@ export default function LoginPage() {
           </CardAction>
         </CardHeader>
         <CardContent>
-          <form>
+          <div>
             <div className='flex flex-col gap-6'>
               <div className='gap-2 grid'>
                 <Label htmlFor='email'>Email</Label>
                 <Input
                   id='email'
                   type='email'
-                  placeholder='m@example.com'
-                  required
+                  placeholder='user@example.com'
+                  {...register("email", { required: "email is required!" })}
                 />
+                {errors.email && (
+                  <p className='text-red-500 text-sm'>{errors.email.message}</p>
+                )}
               </div>
               <div className='gap-2 grid'>
                 <div className='flex items-center'>
@@ -55,10 +77,22 @@ export default function LoginPage() {
                     Forgot your password?
                   </a>
                 </div>
-                <Input id='password' type='password' required />
+                <Input
+                  id='password'
+                  type='password'
+                  placeholder='Enter Your Password'
+                  {...register("password", {
+                    required: "password is required!",
+                  })}
+                />
+                {errors.password && (
+                  <p className='text-red-500 text-sm'>
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
             </div>
-          </form>
+          </div>
         </CardContent>
         <CardFooter className='flex-col gap-2'>
           <Button type='submit' className='w-full hover:cursor-pointer'>
@@ -67,6 +101,6 @@ export default function LoginPage() {
           <LoginWithGoogle />
         </CardFooter>
       </Card>
-    </div>
+    </form>
   );
 }

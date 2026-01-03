@@ -11,22 +11,23 @@ import {
 } from "lucide-react";
 import Logo from "../logo/Logo";
 import ThemeToggle from "../theme/ThemeToggle";
-import NavAuthButtons from "../button/nav/NavAuthButtons";
-import NavUser from "../nav-user/NavUser";
-import DefaultNavLink from "../button/nav/DefaultNavLink";
+import NavAuthButtons from "./nav/NavAuthButtons";
+import NavUser from "./nav-user/NavUser";
+import DefaultNavLink from "./nav/DefaultNavLink";
 import { useAuth } from "@/hooks/useAuth";
+import DesktopNav from "./DesktopNav";
+import type { MenuItem } from "@/types/auth";
+import MobileNav from "./MobileNav";
 
 export default function Navbar() {
   const [show, setShow] = useState(true);
   const lastScrollY = useRef(0);
-  const { auth } = useAuth();
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const { isAuthenticated, loading } = auth;
+  const { auth } = useAuth();
+  const { isAuthenticated } = auth;
 
-  console.log(isAuthenticated);
-
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     { name: "Home", href: "/", icon: House },
     { name: "Participants", href: "/participants", icon: UserRoundSearch },
     {
@@ -66,13 +67,9 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", controlNavbar);
   }, []);
 
-  if (loading) {
-    return null;
-  }
   const visibleMenuItems = menuItems.filter(
     (item) => !item.authOnly || isAuthenticated
   );
-  console.log(visibleMenuItems);
 
   return (
     <div className='top-0 left-0 z-50 fixed shadow-xs backdrop-blur-xs border-accent border-b w-full'>
@@ -120,37 +117,11 @@ export default function Navbar() {
 
                 <AnimatePresence mode='wait'>
                   {isMobileMenuOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, x: -100 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      exit={{ x: -100, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className='top-15 absolute flex flex-col gap-4 bg-background backdrop-blur-md px-10 py-4 border border-accent rounded-md'
-                    >
-                      {visibleMenuItems.map((item) => (
-                        <DefaultNavLink
-                          key={item.href}
-                          href={item.href}
-                          label={item.name}
-                          icon={item.icon}
-                          iconSize={16}
-                        />
-                      ))}
-                    </motion.div>
+                    <MobileNav visibleMenuItems={visibleMenuItems} />
                   )}
                 </AnimatePresence>
 
-                <div className='hidden lg:flex flex-row gap-4 lg:gap-8 xl:gap-10 text-lg'>
-                  {visibleMenuItems.map((item) => (
-                    <DefaultNavLink
-                      key={item.href}
-                      href={item.href}
-                      label={item.name}
-                      icon={item.icon}
-                      iconSize={16}
-                    />
-                  ))}
-                </div>
+                <DesktopNav visibleMenuItems={visibleMenuItems} />
                 <div className='flex flex-row gap-2'>
                   {isAuthenticated ? <NavUser /> : <NavAuthButtons />}
                   <ThemeToggle />

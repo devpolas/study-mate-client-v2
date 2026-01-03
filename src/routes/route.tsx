@@ -10,6 +10,8 @@ import FriendsPage from "@/pages/FriendsPage";
 import ParticipantsPage from "@/pages/ParticipantsPage";
 import AuthLayout from "@/layouts/AuthLayout";
 import PublicLayout from "@/layouts/PublicLayout";
+import SettingsPage from "@/pages/SettingsPage";
+import SupportPage from "@/pages/SupportPage";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +32,8 @@ const router = createBrowserRouter([
 
       { path: "/participants", Component: ParticipantsPage },
       { path: "/about", Component: AboutPage },
+      { path: "/settings", Component: SettingsPage },
+      { path: "/support", Component: SupportPage },
       {
         Component: AuthLayout,
         children: [

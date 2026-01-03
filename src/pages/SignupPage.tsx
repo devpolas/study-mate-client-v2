@@ -12,9 +12,10 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import type { FormValues } from "@/types/auth";
+import { useAuth } from "@/hooks/useAuth";
+import type { SignupCredentials } from "@/types/auth";
 
 export default function SignupPage() {
   const {
@@ -22,12 +23,26 @@ export default function SignupPage() {
     register,
     control,
     formState: { errors },
-  } = useForm<FormValues>();
+  } = useForm<SignupCredentials>();
+
+  const { signup } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const password = useWatch({ name: "password", control });
 
-  async function handleSignup(formData: FormValues) {
-    console.log(formData);
+  async function handleSignup(formData: SignupCredentials) {
+    const response = await signup(
+      formData.name,
+      formData.email,
+      formData.password,
+      formData.passwordConfirm,
+      formData.birthdate
+    );
+
+    if (response.payload) {
+      navigate(location.state || "/", { replace: true });
+    }
   }
 
   return (

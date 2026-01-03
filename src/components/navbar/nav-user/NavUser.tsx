@@ -9,8 +9,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import logo from "@/assets/study_mate.webp";
+import { useAuth } from "@/hooks/useAuth";
+import { Link } from "react-router";
 
 export default function NavUser() {
+  const { logout } = useAuth();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -24,17 +27,20 @@ export default function NavUser() {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuGroup>
           <DropdownMenuItem className='hover:cursor-pointer'>
-            Profile
+            <Link to='/profile'>Profile</Link>
           </DropdownMenuItem>
           <DropdownMenuItem className='hover:cursor-pointer'>
-            Settings
+            <Link to='/settings'>Settings</Link>
           </DropdownMenuItem>
           <DropdownMenuItem className='hover:cursor-pointer'>
-            Help & Support
+            <Link to='/support'>Help & Support</Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className='text-red-400 hover:cursor-pointer'>
+        <DropdownMenuItem
+          onClick={logout}
+          className='text-red-400 hover:cursor-pointer'
+        >
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
