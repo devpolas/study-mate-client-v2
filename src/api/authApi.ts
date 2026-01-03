@@ -1,13 +1,15 @@
 import axios, { AxiosError } from "axios";
 
-const API_URL = "https://study-mate-api.vercel.app/api/v1";
+const API_URL = import.meta.env.VITE_API_URL;
 
 async function authRequest(
   endpoint: string,
   payload: Record<string, unknown>
 ): Promise<string> {
   try {
-    const response = await axios.post(`${API_URL}${endpoint}`, { ...payload });
+    const response = await axios.post(`${API_URL}/users/${endpoint}`, {
+      ...payload,
+    });
 
     const token = response.data?.token;
     if (!token) {
@@ -24,7 +26,7 @@ async function authRequest(
 }
 
 export async function signin(email: string, password: string): Promise<string> {
-  return authRequest("/login", { email, password });
+  return authRequest("login", { email, password });
 }
 
 type SignupPayload = {
@@ -36,9 +38,9 @@ type SignupPayload = {
 };
 
 export async function signup(data: SignupPayload): Promise<string> {
-  return authRequest("/signup", data);
+  return authRequest("signup", data);
 }
 
 export function socialLogin(googleAuthToken: string): Promise<string> {
-  return authRequest("/social-login", { googleAuthToken });
+  return authRequest("social-login", { googleAuthToken });
 }

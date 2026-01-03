@@ -14,9 +14,17 @@ import ThemeToggle from "../theme/ThemeToggle";
 import NavAuthButtons from "../button/nav/NavAuthButtons";
 import NavUser from "../nav-user/NavUser";
 import DefaultNavLink from "../button/nav/DefaultNavLink";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Navbar() {
-  const auth = false;
+  const [show, setShow] = useState(true);
+  const lastScrollY = useRef(0);
+  const { auth } = useAuth();
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const { isAuthenticated, loading } = auth;
+
+  console.log(isAuthenticated);
 
   const menuItems = [
     { name: "Home", href: "/", icon: House },
@@ -27,18 +35,16 @@ export default function Navbar() {
       icon: SquareUserRound,
       authOnly: true,
     },
-    { name: "Friends", href: "/friends", icon: Users, authOnly: true },
+    {
+      name: "Friends",
+      href: "/friends",
+      icon: Users,
+      authOnly: true,
+    },
     { name: "About", href: "/about", icon: SquaresExclude },
   ];
 
-  // Only show items the user is allowed to see
-  const visibleMenuItems = menuItems.filter((item) => !item.authOnly || auth);
-
-  const [show, setShow] = useState(true);
-  const lastScrollY = useRef(0);
   const scrollThreshold = 10;
-
-  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const controlNavbar = () => {
     if (typeof window === "undefined") return;
@@ -59,6 +65,14 @@ export default function Navbar() {
     window.addEventListener("scroll", controlNavbar, { passive: true });
     return () => window.removeEventListener("scroll", controlNavbar);
   }, []);
+
+  if (loading) {
+    return null;
+  }
+  const visibleMenuItems = menuItems.filter(
+    (item) => !item.authOnly || isAuthenticated
+  );
+  console.log(visibleMenuItems);
 
   return (
     <div className='top-0 left-0 z-50 fixed shadow-xs backdrop-blur-xs border-accent border-b w-full'>
@@ -138,7 +152,7 @@ export default function Navbar() {
                   ))}
                 </div>
                 <div className='flex flex-row gap-2'>
-                  {auth ? <NavUser /> : <NavAuthButtons />}
+                  {isAuthenticated ? <NavUser /> : <NavAuthButtons />}
                   <ThemeToggle />
                 </div>
               </div>

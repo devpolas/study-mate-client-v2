@@ -1,4 +1,4 @@
-import DatePicker from "@/components/datapicker/DatePicker";
+import DatePicker from "@/components/date-picker/DatePicker";
 import LoginWithGoogle from "@/components/button/social/LoginWithGoogle";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,83 +13,161 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import type { FormValues } from "@/types/auth";
 
 export default function SignupPage() {
+  const {
+    handleSubmit,
+    register,
+    control,
+    formState: { errors },
+  } = useForm<FormValues>();
+
+  const password = useWatch({ name: "password", control });
+
+  async function handleSignup(formData: FormValues) {
+    console.log(formData);
+  }
+
   return (
-    <div className='flex justify-end w-full h-full'>
-      <Card className='flex w-full max-w-sm'>
-        <CardHeader>
-          <CardTitle>Create new account</CardTitle>
-          <CardDescription>
-            Enter your credentials below to create your account
-          </CardDescription>
-          <CardAction>
-            <Link to='/signin'>
-              <Button className='hover:cursor-pointer' variant='link'>
-                Signin
-              </Button>
-            </Link>
-          </CardAction>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <div className='flex flex-col gap-6'>
-              <div className='gap-2 grid'>
-                <Label htmlFor='name'>Full Name</Label>
-                <Input
-                  id='name'
-                  name='name'
-                  type='text'
-                  placeholder='Full Name'
-                  required
-                />
-              </div>
-              <div className='gap-2 grid'>
-                <Label htmlFor='email'>Email</Label>
-                <Input
-                  name='email'
-                  id='email'
-                  type='email'
-                  placeholder='m@example.com'
-                  required
-                />
-              </div>
+    <form onSubmit={handleSubmit(handleSignup)}>
+      <div className='flex justify-end w-full h-full'>
+        <Card className='flex w-full max-w-sm'>
+          <CardHeader>
+            <CardTitle>Create new account</CardTitle>
+            <CardDescription>
+              Enter your credentials below to create your account
+            </CardDescription>
+            <CardAction>
+              <Link to='/signin'>
+                <Button className='hover:cursor-pointer' variant='link'>
+                  Signin
+                </Button>
+              </Link>
+            </CardAction>
+          </CardHeader>
+          <CardContent>
+            <div>
+              <div className='flex flex-col gap-6'>
+                <div className='gap-2 grid'>
+                  <Label htmlFor='name'>Full Name</Label>
+                  <Input
+                    id='name'
+                    type='text'
+                    placeholder='Full Name'
+                    {...register("name", {
+                      required: "full Name is required!",
+                      minLength: {
+                        value: 3,
+                        message: "full name minimum 3 character!",
+                      },
+                      maxLength: {
+                        value: 50,
+                        message: "full name max 50 character!",
+                      },
+                    })}
+                  />
+                  {errors.name && (
+                    <p className='text-red-500 text-sm'>
+                      {errors.name.message}
+                    </p>
+                  )}
+                </div>
+                <div className='gap-2 grid'>
+                  <Label htmlFor='email'>Email</Label>
+                  <Input
+                    id='email'
+                    type='email'
+                    placeholder='username@example.com'
+                    {...register("email", {
+                      required: "email is required!",
+                      pattern: {
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: "email not valid!",
+                      },
+                    })}
+                  />
+                  {errors.email && (
+                    <p className='text-red-500 text-sm'>
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
 
-              <div className='gap-2 grid'>
-                <Label htmlFor='email'>Date of Birth</Label>
-                <DatePicker />
-              </div>
+                <div className='gap-2 grid'>
+                  <Label htmlFor='email'>Date of Birth</Label>
+                  <Controller
+                    name='birthdate'
+                    control={control}
+                    rules={{ required: "Date of birth is required" }}
+                    render={({ field }) => (
+                      <DatePicker onChange={field.onChange} />
+                    )}
+                  />
 
-              <div className='gap-2 grid'>
-                <Label htmlFor='password'>Password</Label>
-                <Input
-                  id='password'
-                  name='password'
-                  type='password'
-                  required
-                  placeholder='Enter Your Password'
-                />
-              </div>
-              <div className='gap-2 grid'>
-                <Label htmlFor='password'>Confirm Password</Label>
-                <Input
-                  name='confirmPassword'
-                  id='confirmPassword'
-                  type='password'
-                  placeholder='Confirm Your Password'
-                  required
-                />
+                  {errors.birthdate && (
+                    <p className='text-red-500 text-sm'>
+                      {errors.birthdate.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className='gap-2 grid'>
+                  <Label htmlFor='password'>Password</Label>
+                  <Input
+                    id='password'
+                    type='password'
+                    {...register("password", {
+                      required: "password is required!",
+                      minLength: {
+                        value: 6,
+                        message: "password minimum 6 character!",
+                      },
+                      pattern: {
+                        value:
+                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/,
+                        message:
+                          "password at least one (uppercase and lowercase letter, special character, number)!",
+                      },
+                    })}
+                    placeholder='Enter Your Password'
+                  />
+                  {errors.password && (
+                    <p className='text-red-500 text-sm'>
+                      {errors.password.message}
+                    </p>
+                  )}
+                </div>
+                <div className='gap-2 grid'>
+                  <Label htmlFor='password'>Confirm Password</Label>
+                  <Input
+                    id='confirmPassword'
+                    type='password'
+                    placeholder='Confirm Your Password'
+                    {...register("passwordConfirm", {
+                      required: "please confirm your password!",
+                      validate: (value) =>
+                        value === password || "password doesn't match!",
+                    })}
+                  />
+                  {errors.passwordConfirm && (
+                    <p className='text-red-500 text-sm'>
+                      {errors.passwordConfirm.message}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
-          </form>
-        </CardContent>
-        <CardFooter className='flex-col gap-2'>
-          <Button type='submit' className='w-full hover:cursor-pointer'>
-            Signup
-          </Button>
-          <LoginWithGoogle />
-        </CardFooter>
-      </Card>
-    </div>
+          </CardContent>
+          <CardFooter className='flex-col gap-2'>
+            <Button type='submit' className='w-full hover:cursor-pointer'>
+              Signup
+            </Button>
+            <LoginWithGoogle />
+          </CardFooter>
+        </Card>
+      </div>
+    </form>
   );
 }

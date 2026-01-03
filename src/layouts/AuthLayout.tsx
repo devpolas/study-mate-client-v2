@@ -1,10 +1,13 @@
+import { useAuth } from "@/hooks/useAuth";
 import { Navigate, Outlet, useLocation } from "react-router";
 
 export default function AuthLayout() {
-  const auth = false;
+  const { auth } = useAuth();
+
+  const { isAuthenticated } = auth;
   const location = useLocation();
 
-  if (!auth) {
+  if (!isAuthenticated) {
     return (
       <Navigate
         to='/signin'
