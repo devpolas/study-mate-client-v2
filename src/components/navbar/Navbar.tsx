@@ -1,4 +1,3 @@
-import { Link } from "react-router";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -9,23 +8,31 @@ import {
   Users,
   UserRoundSearch,
   SquaresExclude,
-  LogOut,
-  AtSign,
 } from "lucide-react";
-import { Button } from "../ui/button";
 import Logo from "../logo/Logo";
 import ThemeToggle from "../theme/ThemeToggle";
 import NavAuthButtons from "../button/nav/NavAuthButtons";
+import NavUser from "../nav-user/NavUser";
+import DefaultNavLink from "../button/nav/DefaultNavLink";
 
 export default function Navbar() {
+  const auth = false;
+
   const menuItems = [
-    { name: "Home", href: "/", icon: <House size={16} /> },
-    { name: "Partners", href: "/#skills", icon: <UserRoundSearch size={16} /> },
-    { name: "Profile", href: "/projects", icon: <SquareUserRound size={16} /> },
-    { name: "Friends", href: "/blog", icon: <Users size={16} /> },
-    { name: "Contact", href: "/about", icon: <AtSign size={16} /> },
-    { name: "About", href: "/about", icon: <SquaresExclude size={16} /> },
+    { name: "Home", href: "/", icon: House },
+    { name: "Participants", href: "/participants", icon: UserRoundSearch },
+    {
+      name: "Profile",
+      href: "/profile",
+      icon: SquareUserRound,
+      authOnly: true,
+    },
+    { name: "Friends", href: "/friends", icon: Users, authOnly: true },
+    { name: "About", href: "/about", icon: SquaresExclude },
   ];
+
+  // Only show items the user is allowed to see
+  const visibleMenuItems = menuItems.filter((item) => !item.authOnly || auth);
 
   const [show, setShow] = useState(true);
   const lastScrollY = useRef(0);
@@ -106,38 +113,32 @@ export default function Navbar() {
                       transition={{ duration: 0.3 }}
                       className='top-15 absolute flex flex-col gap-4 bg-background backdrop-blur-md px-10 py-4 border border-accent rounded-md'
                     >
-                      {menuItems.map((item) => (
-                        <Link
-                          key={item.name}
-                          to={item.href}
-                          className='hover:text-ring transition-colors'
-                        >
-                          <span className='flex flex-row items-center gap-3'>
-                            {item.icon}
-                            {item.name}
-                          </span>
-                        </Link>
+                      {visibleMenuItems.map((item) => (
+                        <DefaultNavLink
+                          key={item.href}
+                          href={item.href}
+                          label={item.name}
+                          icon={item.icon}
+                          iconSize={16}
+                        />
                       ))}
                     </motion.div>
                   )}
                 </AnimatePresence>
 
                 <div className='hidden lg:flex flex-row gap-4 lg:gap-8 xl:gap-10 text-lg'>
-                  {menuItems.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className='hover:text-ring transition-colors'
-                    >
-                      <span className='flex flex-row items-center gap-0.5 lg:gap-1'>
-                        {item.icon}
-                        {item.name}
-                      </span>
-                    </Link>
+                  {visibleMenuItems.map((item) => (
+                    <DefaultNavLink
+                      key={item.href}
+                      href={item.href}
+                      label={item.name}
+                      icon={item.icon}
+                      iconSize={16}
+                    />
                   ))}
                 </div>
                 <div className='flex flex-row gap-2'>
-                  <NavAuthButtons />
+                  {auth ? <NavUser /> : <NavAuthButtons />}
                   <ThemeToggle />
                 </div>
               </div>

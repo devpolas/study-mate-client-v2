@@ -61,15 +61,7 @@ export default function SignupPage() {
               </div>
 
               <div className='gap-2 grid'>
-                <div className='flex items-center'>
-                  <Label htmlFor='password'>Password</Label>
-                  <a
-                    href='#'
-                    className='inline-block ml-auto text-sm hover:underline underline-offset-4'
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
+                <Label htmlFor='password'>Password</Label>
                 <Input
                   id='password'
                   name='password'
@@ -82,7 +74,7 @@ export default function SignupPage() {
                 <Label htmlFor='password'>Confirm Password</Label>
                 <Input
                   name='confirmPassword'
-                  id='password'
+                  id='confirmPassword'
                   type='password'
                   placeholder='Confirm Your Password'
                   required

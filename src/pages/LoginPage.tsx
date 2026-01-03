@@ -11,9 +11,12 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
 export default function LoginPage() {
+  const location = useLocation();
+  console.log(location.state);
+
   return (
     <div className='flex justify-end w-full h-full'>
       <Card className='flex w-full max-w-sm'>
@@ -47,7 +50,7 @@ export default function LoginPage() {
                   <Label htmlFor='password'>Password</Label>
                   <a
                     href='#'
-                    className='inline-block ml-auto text-sm hover:underline underline-offset-4'
+                    className='inline-block ml-auto text-xs sm:text-sm hover:underline underline-offset-4'
                   >
                     Forgot your password?
                   </a>
