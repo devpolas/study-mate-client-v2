@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router";
 
 export default function PublicLayout() {
-  const auth = true;
+  const auth = false;
 
   if (auth) {
     return <Navigate to='/' replace />;
