@@ -1,5 +1,4 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { FriendCard } from "@/components/friend/FriendCard";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
@@ -7,6 +6,7 @@ import useFriendShipActions from "@/hooks/useFriendShipActions";
 import { useQuery } from "@tanstack/react-query";
 import type { User } from "@/types/auth";
 import { FriendCardSkeleton } from "@/components/SkeletonCard/FriendCardSkeleton";
+import FriendActionButton from "@/components/friend/FriendActionButtons";
 
 type FriendshipStatus = "pending" | "accepted" | "rejected";
 
@@ -20,7 +20,13 @@ interface Friendship {
 }
 
 export default function FriendsPage() {
-  const { allFriend, allFriendRequest } = useFriendShipActions();
+  const {
+    allFriend,
+    allFriendRequest,
+    acceptFriendRequest,
+    deleteRequest,
+    unfriend,
+  } = useFriendShipActions();
   const {
     fetchMe,
     auth: { user: currentUser, loading: userLoading },
@@ -90,9 +96,11 @@ export default function FriendsPage() {
                     : f.requester
                 }
                 actions={
-                  <Button size='sm' variant='destructive'>
-                    Unfriend
-                  </Button>
+                  <FriendActionButton
+                    action='unfriend'
+                    onClick={() => unfriend.mutate(f.requester._id)}
+                    isLoading={unfriend.isPending}
+                  />
                 }
               />
             ))
@@ -112,9 +120,11 @@ export default function FriendsPage() {
                 key={r._id}
                 user={r.recipient}
                 actions={
-                  <Button size='sm' variant='destructive'>
-                    Cancel
-                  </Button>
+                  <FriendActionButton
+                    action='cancel'
+                    onClick={() => deleteRequest.mutate(r.recipient._id)}
+                    isLoading={deleteRequest.isPending}
+                  />
                 }
               />
             ))
@@ -135,10 +145,18 @@ export default function FriendsPage() {
                 user={r.requester}
                 actions={
                   <>
-                    <Button size='sm'>Accept</Button>
-                    <Button size='sm' variant='outline'>
-                      Reject
-                    </Button>
+                    <FriendActionButton
+                      action='accept'
+                      onClick={() =>
+                        acceptFriendRequest.mutate(r.requester._id)
+                      }
+                      isLoading={acceptFriendRequest.isPending}
+                    />
+                    <FriendActionButton
+                      action='cancel'
+                      onClick={() => deleteRequest.mutate(r.recipient._id)}
+                      isLoading={deleteRequest.isPending}
+                    />
                   </>
                 }
               />

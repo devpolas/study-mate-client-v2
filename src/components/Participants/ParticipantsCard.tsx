@@ -32,7 +32,6 @@ export default function ParticipantsCard({
   const { sendFriendRequest, acceptFriendRequest, deleteRequest, unfriend } =
     useFriendShipActions();
 
-  console.log(isReceived, isReceived, isFriend);
   return (
     <Card className='flex flex-col'>
       <CardContent className='flex-1 space-y-4 p-5'>
