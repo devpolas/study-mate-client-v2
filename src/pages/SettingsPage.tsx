@@ -107,14 +107,40 @@ export default function ProfilePage() {
               <span>Subject</span>
               <Input {...register("subject")} placeholder='Subject' />
             </div>
-            <div className='flex flex-col justify-between gap-1'>
+            <div className='flex sm:flex-row flex-col justify-between sm:items-center sm:gap-1'>
               <span>Availability</span>
-              <Input
-                {...register("availability")}
-                placeholder='Availability (e.g. Morning 6–10 AM)'
-              />
+              <Select
+                value={watch("availability")}
+                onValueChange={(v: string) =>
+                  setValue("availability", v as ProfileFormData["availability"])
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder='Availability' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='Morning 6:00 AM – 10:00 AM'>
+                    Morning 6:00 AM – 10:00 AM
+                  </SelectItem>
+                  <SelectItem value='Lunch 12:00 PM – 2:00 PM'>
+                    Lunch 12:00 PM – 2:00 PM
+                  </SelectItem>
+                  <SelectItem value='Afternoon 2:00 PM – 6:00 PM'>
+                    Afternoon 2:00 PM – 6:00 PM
+                  </SelectItem>
+                  <SelectItem value='Evening 6:00 PM – 9:00 PM'>
+                    Evening 6:00 PM – 9:00 PM
+                  </SelectItem>
+                  <SelectItem value='Night 9:00 PM – 12:00 AM'>
+                    Night 9:00 PM – 12:00 AM
+                  </SelectItem>
+                  <SelectItem value='Late Night 12:00 AM – 6:00 AM'>
+                    Late Night 12:00 AM – 6:00 AM
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <div className='flex justify-between items-center'>
+            <div className='flex sm:flex-row flex-col justify-between sm:items-center sm:gap-1'>
               <span>Experience Level</span>
               <Select
                 value={watch("experienceLevel")}

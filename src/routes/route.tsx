@@ -12,6 +12,7 @@ import AuthLayout from "@/layouts/AuthLayout";
 import PublicLayout from "@/layouts/PublicLayout";
 import SettingsPage from "@/pages/SettingsPage";
 import SupportPage from "@/pages/SupportPage";
+import CompleteProfile from "@/pages/CompleteProfile";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,7 @@ const router = createBrowserRouter([
         Component: AuthLayout,
         children: [
           { path: "/profile", Component: ProfilePage },
+          { path: "/complete-profile", Component: CompleteProfile },
           { path: "/friends", Component: FriendsPage },
           { path: "/settings", Component: SettingsPage },
         ],
