@@ -1,5 +1,11 @@
 import { useForm } from "react-hook-form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -11,12 +17,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
-import { useEffect } from "react";
+import { useEffect, useId, useState, useTransition } from "react";
 import { ProfileSkeleton } from "@/components/SkeletonCard/ProfileSkeleton";
 import { Badge } from "@/components/ui/badge";
 import { useGeoLocation } from "@/hooks/useGeoLocation";
 import { Spinner } from "@/components/ui/spinner";
 import { MapPin } from "lucide-react";
+import useAxiosSecure from "@/hooks/useAxiosSecure";
+import { uploadImageToImgBB } from "@/utils/imageUpload";
 
 interface ProfileFormData {
   name: string;
@@ -28,6 +36,12 @@ interface ProfileFormData {
 }
 
 export default function ProfilePage() {
+  const id = useId();
+  const [image, setProfileImage] = useState<File | null>(null);
+  const [localImageUrl, setLocalImageUrl] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const axiosSecure = useAxiosSecure();
   const {
     isLoading: positionLoading,
     address,
@@ -72,6 +86,30 @@ export default function ProfilePage() {
     }
   }, [address, setValue]);
 
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = (e.target.files && e.target.files[0]) || null;
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setLocalImageUrl(url);
+    }
+    setProfileImage(file);
+  }
+
+  async function handleUpdateProfileImage() {
+    if (image) {
+      const url = await uploadImageToImgBB(id, image);
+      console.log(url);
+      if (url) {
+        const response = await axiosSecure.patch("/users/updateMe", {
+          image: url,
+        });
+        if (response.status === 200) {
+          console.log("updated");
+        }
+      }
+    }
+  }
+
   const onSubmit = (data: ProfileFormData) => {
     console.log("UPDATE PROFILE:", data);
     // dispatch(updateProfileThunk(data))
@@ -85,7 +123,7 @@ export default function ProfilePage() {
       <Card>
         <CardContent className='flex items-center gap-6 p-6'>
           <img
-            src={user.image || "/avatar.svg"}
+            src={localImageUrl ? localImageUrl : user.image || "/avatar.svg"}
             alt={user.name}
             className='border rounded-full w-24 h-24 object-cover'
           />
@@ -98,6 +136,31 @@ export default function ProfilePage() {
             <p className='text-muted-foreground text-sm'>@{user.slug}</p>
           </div>
         </CardContent>
+        {user.authProvider === "mongodb" && (
+          <CardFooter>
+            <div className='flex gap-2'>
+              <Input type='file' accept='image/*' onChange={handleChange} />
+              <Button
+                onClick={() =>
+                  startTransition(async () => await handleUpdateProfileImage())
+                }
+                className='hover:cursor-pointer'
+                size='default'
+                variant='outline'
+                type='button'
+              >
+                {isPending ? (
+                  <Badge variant='outline'>
+                    <Spinner />
+                    Processing
+                  </Badge>
+                ) : (
+                  "Update"
+                )}
+              </Button>
+            </div>
+          </CardFooter>
+        )}
       </Card>
       <form
         onSubmit={handleSubmit(onSubmit)}

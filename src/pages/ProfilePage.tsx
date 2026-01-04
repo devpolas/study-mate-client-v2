@@ -5,6 +5,7 @@ import { ProfileSkeleton } from "@/components/SkeletonCard/ProfileSkeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatTimeDate } from "@/utils/formateDateTime";
+import { Link } from "react-router";
 
 export default function ProfilePage() {
   const {
@@ -23,8 +24,8 @@ export default function ProfilePage() {
 
   return (
     <div className='space-y-6 mx-auto max-w-5xl'>
-      <Card>
-        <CardContent className='flex items-center gap-6 p-6'>
+      <Card className='flex flex-row justify-between'>
+        <CardContent className='flex items-center gap-6 p-2 md:p-4 lg:p-6'>
           <img
             src={user.image || "/avatar.svg"}
             alt={user.name}
@@ -39,6 +40,11 @@ export default function ProfilePage() {
             <p className='text-muted-foreground text-sm'>@{user.slug}</p>
           </div>
         </CardContent>
+        <Link className='mr-4 md:mr-6 lg:mr-8' to='/settings'>
+          <Button className='hover:cursor-pointer' variant='outline' size='sm'>
+            Edit
+          </Button>
+        </Link>
       </Card>
 
       <div className='gap-6 grid md:grid-cols-2'>
