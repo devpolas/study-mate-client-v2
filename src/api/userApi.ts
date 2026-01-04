@@ -1,11 +1,11 @@
 import axios, { AxiosError } from "axios";
 import type { User } from "../types/auth";
 
-const API_URL = "http://localhost:5000/api/v1/users";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export async function getMe(token: string): Promise<User> {
   try {
-    const response = await axios.get(`${API_URL}/me`, {
+    const response = await axios.get(`${API_URL}/users/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

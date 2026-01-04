@@ -16,6 +16,7 @@ import { ProfileSkeleton } from "@/components/SkeletonCard/ProfileSkeleton";
 import { Badge } from "@/components/ui/badge";
 
 interface ProfileFormData {
+  image: string;
   name: string;
   subject?: string;
   availability?: string;
@@ -24,7 +25,7 @@ interface ProfileFormData {
   experienceLevel: "beginner" | "intermediate" | "expert";
 }
 
-export default function ProfilePage() {
+export default function CompleteProfile() {
   const {
     fetchMe,
     auth: { loading, user },
@@ -54,7 +55,10 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className='space-y-6 mx-auto max-w-5xl'>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className='space-y-6 mx-auto max-w-5xl'
+    >
       <Card>
         <CardContent className='flex items-center gap-6 p-6'>
           <img
@@ -72,10 +76,7 @@ export default function ProfilePage() {
           </div>
         </CardContent>
       </Card>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className='gap-6 grid md:grid-cols-2'
-      >
+      <div className='gap-6 grid md:grid-cols-2'>
         <Card>
           <CardHeader>
             <CardTitle>Personal Info</CardTitle>
@@ -150,23 +151,9 @@ export default function ProfilePage() {
           type='submit'
           className='w-1/2 hover:cursor-pointer'
         >
-          Save Changes
+          Update Profile
         </Button>
-      </form>
-      {user.authProvider === "mongodb" && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Security</CardTitle>
-          </CardHeader>
-          <CardContent className='space-y-4'>
-            <Input type='password' placeholder='New Password' />
-            <Input type='password' placeholder='Confirm Password' />
-            <Button className='hover:cursor-pointer' variant='destructive'>
-              Update Password
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+      </div>
+    </form>
   );
 }

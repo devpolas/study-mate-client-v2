@@ -36,3 +36,20 @@ export interface MenuItem {
   icon: LucideIcon;
   authOnly?: boolean;
 }
+
+export interface User {
+  _id: string;
+  name: string;
+  email: string;
+  role: "student" | "tutor" | "admin";
+  image?: string;
+  studyMode: boolean;
+  experienceLevel: "beginner" | "intermediate" | "expert";
+  availability?: string;
+  location?: string;
+  subject?: string;
+  ratingAverage: number;
+  authProvider: "mongodb" | "firebase";
+  slug: string;
+  createdAt: string;
+}
