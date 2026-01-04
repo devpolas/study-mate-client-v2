@@ -1,4 +1,6 @@
+import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
+import { Spinner } from "../ui/spinner";
 
 type ActionType = "send" | "accept" | "cancel" | "unfriend";
 
@@ -45,7 +47,14 @@ export default function FriendActionButton({
       variant={variant}
       className='hover:shadow-md transition hover:-translate-y-0.5 hover:cursor-pointer'
     >
-      {isLoading ? "Processing..." : label}
+      {isLoading ? (
+        <Badge variant='outline'>
+          <Spinner />
+          Processing
+        </Badge>
+      ) : (
+        label
+      )}
     </Button>
   );
 }

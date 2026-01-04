@@ -1,12 +1,60 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { FriendCard } from "@/components/friend/FriendCard";
+import { useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import useFriendShipActions from "@/hooks/useFriendShipActions";
+import { useQuery } from "@tanstack/react-query";
 import type { User } from "@/types/auth";
+import { FriendCardSkeleton } from "@/components/SkeletonCard/FriendCardSkeleton";
+
+type FriendshipStatus = "pending" | "accepted" | "rejected";
+
+interface Friendship {
+  _id: string;
+  requester: User;
+  recipient: User;
+  status: FriendshipStatus;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export default function FriendsPage() {
-  const friends: User[] = [];
-  const sentRequests: User[] = [];
-  const receivedRequests: User[] = [];
+  const { allFriend, allFriendRequest } = useFriendShipActions();
+  const {
+    fetchMe,
+    auth: { user: currentUser, loading: userLoading },
+  } = useAuth();
+
+  useEffect(() => {
+    fetchMe();
+  }, []);
+
+  const { data: friends = [], isLoading: friendsLoading } = useQuery<
+    Friendship[]
+  >({
+    queryKey: ["friends", currentUser?._id],
+    queryFn: () => allFriend(currentUser!._id),
+    enabled: !userLoading && !!currentUser?._id,
+  });
+
+  const { data: requests = [], isLoading: requestsLoading } = useQuery<
+    Friendship[]
+  >({
+    queryKey: ["friendRequests", currentUser?._id],
+    queryFn: () => allFriendRequest(currentUser!._id),
+    enabled: !userLoading && !!currentUser?._id,
+  });
+
+  const loading = friendsLoading || requestsLoading;
+
+  const sentRequests: Friendship[] = requests.filter(
+    (r) => r.status === "pending" && r.requester._id === currentUser?._id
+  );
+
+  const receivedRequests: Friendship[] = requests.filter(
+    (r) => r.status === "pending" && r.recipient._id === currentUser?._id
+  );
 
   return (
     <div className='space-y-6 mx-auto max-w-4xl'>
@@ -26,21 +74,43 @@ export default function FriendsPage() {
         </TabsList>
 
         <TabsContent value='friends' className='space-y-2 sm:space-y-4'>
-          {friends.length === 0 ? (
+          {loading ? (
+            Array.from({ length: 5 }).map((_, i) => (
+              <FriendCardSkeleton key={i} />
+            ))
+          ) : friends.length === 0 ? (
             <Empty text='No friends yet' />
           ) : (
-            friends.map((f) => <FriendCard key={f._id} user={f} />)
+            friends.map((f) => (
+              <FriendCard
+                key={f._id}
+                user={
+                  f.requester._id === currentUser?._id
+                    ? f.recipient
+                    : f.requester
+                }
+                actions={
+                  <Button size='sm' variant='destructive'>
+                    Unfriend
+                  </Button>
+                }
+              />
+            ))
           )}
         </TabsContent>
 
         <TabsContent value='sent' className='space-y-2 sm:space-y-4'>
-          {sentRequests.length === 0 ? (
+          {loading ? (
+            Array.from({ length: 5 }).map((_, i) => (
+              <FriendCardSkeleton key={i} />
+            ))
+          ) : sentRequests.length === 0 ? (
             <Empty text='No sent requests' />
           ) : (
-            sentRequests.map((r) => (
+            sentRequests.map((r: Friendship) => (
               <FriendCard
                 key={r._id}
-                user={r}
+                user={r.recipient}
                 actions={
                   <Button size='sm' variant='destructive'>
                     Cancel
@@ -52,13 +122,17 @@ export default function FriendsPage() {
         </TabsContent>
 
         <TabsContent value='received' className='space-y-2 sm:space-y-4'>
-          {receivedRequests.length === 0 ? (
+          {loading ? (
+            Array.from({ length: 5 }).map((_, i) => (
+              <FriendCardSkeleton key={i} />
+            ))
+          ) : receivedRequests.length === 0 ? (
             <Empty text='No incoming requests' />
           ) : (
-            receivedRequests.map((r) => (
+            receivedRequests.map((r: Friendship) => (
               <FriendCard
                 key={r._id}
-                user={r}
+                user={r.requester}
                 actions={
                   <>
                     <Button size='sm'>Accept</Button>
