@@ -14,6 +14,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
 import { ProfileSkeleton } from "@/components/SkeletonCard/ProfileSkeleton";
 import { Badge } from "@/components/ui/badge";
+import { useGeoLocation } from "@/hooks/useGeoLocation";
+import { Spinner } from "@/components/ui/spinner";
+import { MapPin } from "lucide-react";
 
 interface ProfileFormData {
   name: string;
@@ -26,6 +29,13 @@ interface ProfileFormData {
 
 export default function ProfilePage() {
   const {
+    isLoading: positionLoading,
+    address,
+    error: positionError,
+    getPosition,
+  } = useGeoLocation();
+
+  const {
     fetchMe,
     auth: { loading, user },
   } = useAuth();
@@ -34,16 +44,33 @@ export default function ProfilePage() {
     fetchMe();
   }, []);
 
-  const { register, handleSubmit, setValue, watch } = useForm<ProfileFormData>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<ProfileFormData>({
     defaultValues: {
       name: user?.name || "",
       subject: user?.subject || "",
-      availability: user?.availability || "",
+      availability: user?.availability || "Morning 6:00 AM – 10:00 AM",
       location: user?.location || "",
       studyMode: user?.studyMode || false,
       experienceLevel: user?.experienceLevel || "beginner",
     },
   });
+
+  useEffect(() => {
+    if (address) {
+      setValue(
+        "location",
+        `${address.city || ""}, ${address.principalSubdivision || ""}, ${
+          address.countryName || ""
+        }`
+      );
+    }
+  }, [address, setValue]);
 
   const onSubmit = (data: ProfileFormData) => {
     console.log("UPDATE PROFILE:", data);
@@ -84,17 +111,53 @@ export default function ProfilePage() {
             <div className='flex flex-col justify-between gap-1'>
               <span>Full Name</span>
               <Input
-                {...register("name", { required: true, minLength: 3 })}
+                {...register("name", {
+                  required: "full name is required",
+                  minLength: {
+                    value: 3,
+                    message: "full name must be 3 character",
+                  },
+                })}
                 placeholder='Full Name'
               />
             </div>
+            {errors.name && (
+              <p className='text-red-500 text-sm'>{errors.name.message}</p>
+            )}
             <div className='flex flex-col justify-between gap-1'>
               <span>Email</span>
               <Input value={user.email} disabled />
             </div>
             <div className='flex flex-col justify-between gap-1'>
               <span>Location</span>
-              <Input {...register("location")} placeholder='Location' />
+              <div className='relative'>
+                <Input
+                  {...register("location", {
+                    required: "Location is required",
+                  })}
+                  placeholder='Location'
+                  value={watch("location")}
+                  onChange={(e) => setValue("location", e.target.value)}
+                />
+
+                {positionLoading ? (
+                  <Spinner className='inline right-2 absolute my-auto h-full' />
+                ) : (
+                  <MapPin
+                    onClick={getPosition}
+                    className='inline right-2 absolute my-auto h-full hover:text-ring hover:cursor-pointer'
+                  />
+                )}
+              </div>
+
+              {positionError && (
+                <p className='text-red-500 text-sm'>{positionError}</p>
+              )}
+              {errors.location && (
+                <p className='text-red-500 text-sm'>
+                  {errors.location.message}
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -105,12 +168,19 @@ export default function ProfilePage() {
           <CardContent className='space-y-4'>
             <div className='flex flex-col justify-between gap-1'>
               <span>Subject</span>
-              <Input {...register("subject")} placeholder='Subject' />
+              <Input
+                {...register("subject", { required: "subject is required" })}
+                placeholder='Subject'
+              />
+              {errors.subject && (
+                <p className='text-red-500 text-sm'>{errors.subject.message}</p>
+              )}
             </div>
             <div className='flex sm:flex-row flex-col justify-between sm:items-center sm:gap-1'>
               <span>Availability</span>
               <Select
                 value={watch("availability")}
+                required={true}
                 onValueChange={(v: string) =>
                   setValue("availability", v as ProfileFormData["availability"])
                 }
@@ -139,11 +209,15 @@ export default function ProfilePage() {
                   </SelectItem>
                 </SelectContent>
               </Select>
+              {errors.availability?.types?.required && (
+                <p className='text-red-500 text-sm'>availability is required</p>
+              )}
             </div>
             <div className='flex sm:flex-row flex-col justify-between sm:items-center sm:gap-1'>
               <span>Experience Level</span>
               <Select
                 value={watch("experienceLevel")}
+                required={true}
                 onValueChange={(v: string) =>
                   setValue(
                     "experienceLevel",
@@ -160,10 +234,16 @@ export default function ProfilePage() {
                   <SelectItem value='expert'>Expert</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.experienceLevel?.types?.required && (
+                <p className='text-red-500 text-sm'>
+                  experience level is required
+                </p>
+              )}
             </div>
             <div className='flex justify-between items-center'>
               <span>Online Study Mode</span>
               <Switch
+                className='hover:cursor-pointer'
                 checked={watch("studyMode")}
                 onCheckedChange={(v) => setValue("studyMode", v)}
               />
