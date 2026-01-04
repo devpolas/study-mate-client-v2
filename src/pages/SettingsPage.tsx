@@ -25,14 +25,15 @@ import { Spinner } from "@/components/ui/spinner";
 import { MapPin } from "lucide-react";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import { uploadImageToImgBB } from "@/utils/imageUpload";
+import useUpdateProfile from "@/hooks/useUpdateProfile";
 
 interface ProfileFormData {
-  name: string;
+  name?: string;
   subject?: string;
   availability?: string;
   location?: string;
   studyMode: boolean;
-  experienceLevel: "beginner" | "intermediate" | "expert";
+  experienceLevel: "Beginner" | "Intermediate" | "Expert";
 }
 
 export default function ProfilePage() {
@@ -42,6 +43,8 @@ export default function ProfilePage() {
   const [isPending, startTransition] = useTransition();
 
   const axiosSecure = useAxiosSecure();
+  const { updateProfile } = useUpdateProfile();
+
   const {
     isLoading: positionLoading,
     address,
@@ -71,7 +74,7 @@ export default function ProfilePage() {
       availability: user?.availability || "Morning 6:00 AM – 10:00 AM",
       location: user?.location || "",
       studyMode: user?.studyMode || false,
-      experienceLevel: user?.experienceLevel || "beginner",
+      experienceLevel: user?.experienceLevel || "Beginner",
     },
   });
 
@@ -110,9 +113,8 @@ export default function ProfilePage() {
     }
   }
 
-  const onSubmit = (data: ProfileFormData) => {
-    console.log("UPDATE PROFILE:", data);
-    // dispatch(updateProfileThunk(data))
+  const onSubmit = async (data: ProfileFormData) => {
+    await updateProfile.mutate({ ...data });
   };
   if (loading || !user) {
     return <ProfileSkeleton />;
@@ -292,9 +294,9 @@ export default function ProfilePage() {
                   <SelectValue placeholder='Experience Level' />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='beginner'>Beginner</SelectItem>
-                  <SelectItem value='intermediate'>Intermediate</SelectItem>
-                  <SelectItem value='expert'>Expert</SelectItem>
+                  <SelectItem value='Beginner'>Beginner</SelectItem>
+                  <SelectItem value='Intermediate'>Intermediate</SelectItem>
+                  <SelectItem value='Expert'>Expert</SelectItem>
                 </SelectContent>
               </Select>
               {errors.experienceLevel?.types?.required && (
@@ -316,10 +318,18 @@ export default function ProfilePage() {
 
         <Button
           variant='outline'
+          disabled={updateProfile.isPending}
           type='submit'
           className='w-1/2 hover:cursor-pointer'
         >
-          Save Changes
+          {updateProfile.isPending ? (
+            <Badge variant='outline'>
+              <Spinner />
+              Processing
+            </Badge>
+          ) : (
+            "Update"
+          )}
         </Button>
       </form>
       {user.authProvider === "mongodb" && (

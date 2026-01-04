@@ -44,7 +44,7 @@ export interface User {
   role: "student" | "tutor" | "admin";
   image?: string;
   studyMode: boolean;
-  experienceLevel: "beginner" | "intermediate" | "expert";
+  experienceLevel: "Beginner" | "Intermediate" | "Expert";
   availability?: string;
   location?: string;
   subject?: string;

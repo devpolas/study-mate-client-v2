@@ -14,7 +14,7 @@ interface ParticipantsCardProps {
     image?: string;
     role: "student" | "tutor" | "admin";
     subject?: string;
-    experienceLevel: "beginner" | "intermediate" | "expert";
+    experienceLevel: "Beginner" | "Intermediate" | "Expert";
     studyMode: boolean;
     ratingAverage: number;
   };

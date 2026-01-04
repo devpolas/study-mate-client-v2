@@ -9,7 +9,7 @@ interface FriendCardProps {
     slug: string;
     image?: string;
     subject?: string;
-    experienceLevel: "beginner" | "intermediate" | "expert";
+    experienceLevel: "Beginner" | "Intermediate" | "Expert";
     ratingAverage: number;
   };
   actions?: React.ReactNode;

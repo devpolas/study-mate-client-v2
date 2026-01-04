@@ -25,6 +25,7 @@ import { MapPin } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import { uploadImageToImgBB } from "@/utils/imageUpload";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
+import useUpdateProfile from "@/hooks/useUpdateProfile";
 
 interface ProfileFormData {
   image: string;
@@ -33,7 +34,7 @@ interface ProfileFormData {
   availability?: string;
   location?: string;
   studyMode: boolean;
-  experienceLevel: "beginner" | "intermediate" | "expert";
+  experienceLevel: "Beginner" | "Intermediate" | "Expert";
 }
 
 export default function CompleteProfile() {
@@ -42,6 +43,7 @@ export default function CompleteProfile() {
   const [localImageUrl, setLocalImageUrl] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const axiosSecure = useAxiosSecure();
+  const { updateProfile } = useUpdateProfile();
   const {
     isLoading: positionLoading,
     address,
@@ -71,7 +73,7 @@ export default function CompleteProfile() {
       availability: user?.availability || "Morning 6:00 AM – 10:00 AM",
       location: user?.location || "",
       studyMode: user?.studyMode || false,
-      experienceLevel: user?.experienceLevel || "beginner",
+      experienceLevel: user?.experienceLevel || "Beginner",
     },
   });
 
@@ -111,9 +113,8 @@ export default function CompleteProfile() {
     }
   }
 
-  const onSubmit = (data: ProfileFormData) => {
-    console.log("UPDATE PROFILE:", data);
-    // dispatch(updateProfileThunk(data))
+  const onSubmit = async (data: ProfileFormData) => {
+    await updateProfile.mutate({ ...data });
   };
 
   if (loading || !user) {
@@ -318,10 +319,18 @@ export default function CompleteProfile() {
 
         <Button
           variant='outline'
+          disabled={updateProfile.isPending}
           type='submit'
           className='w-1/2 hover:cursor-pointer'
         >
-          Update Profile
+          {updateProfile.isPending ? (
+            <Badge variant='outline'>
+              <Spinner />
+              Processing
+            </Badge>
+          ) : (
+            "Update"
+          )}
         </Button>
       </div>
     </form>

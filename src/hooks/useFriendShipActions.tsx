@@ -18,8 +18,8 @@ export default function useFriendShipActions() {
   };
 
   const sendFriendRequest = useMutation({
-    mutationFn: (recipientId: string) =>
-      axiosSecure.post("/friendships/send-request", { recipientId }),
+    mutationFn: async (recipientId: string) =>
+      await axiosSecure.post("/friendships/send-request", { recipientId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["friends"] });
       queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
@@ -27,8 +27,8 @@ export default function useFriendShipActions() {
   });
 
   const acceptFriendRequest = useMutation({
-    mutationFn: (requesterId: string) =>
-      axiosSecure.post("/friendships/accept-request", { requesterId }),
+    mutationFn: async (requesterId: string) =>
+      await axiosSecure.post("/friendships/accept-request", { requesterId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["friends"] });
       queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
@@ -36,16 +36,16 @@ export default function useFriendShipActions() {
   });
 
   const deleteRequest = useMutation({
-    mutationFn: (recipientId: string) =>
-      axiosSecure.post("/friendships/delete-request", { recipientId }),
+    mutationFn: async (recipientId: string) =>
+      await axiosSecure.post("/friendships/delete-request", { recipientId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["friendRequests"] });
     },
   });
 
   const unfriend = useMutation({
-    mutationFn: (recipientId: string) =>
-      axiosSecure.post("/friendships/unfriend", { recipientId }),
+    mutationFn: async (recipientId: string) =>
+      await axiosSecure.post("/friendships/unfriend", { recipientId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["friends"] });
     },
