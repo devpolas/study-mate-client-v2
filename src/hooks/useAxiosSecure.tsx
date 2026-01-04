@@ -5,7 +5,7 @@ import { useAuth } from "./useAuth";
 
 // Create Axios instance
 const instance = axios.create({
-  baseURL: "https://study-mate-api.vercel.app/api/v1",
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 // Get access token from local storage

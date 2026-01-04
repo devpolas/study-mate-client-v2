@@ -3,7 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, BookOpen } from "lucide-react";
 import { Link } from "react-router";
-import { SendRequest } from "../friend/FriendActionButtons";
+import FriendActionButton from "../friend/FriendActionButtons";
+import useFriendShipActions from "@/hooks/useFriendShipActions";
 
 interface ParticipantsCardProps {
   user: {
@@ -17,9 +18,21 @@ interface ParticipantsCardProps {
     studyMode: boolean;
     ratingAverage: number;
   };
+  isFriend?: boolean;
+  isRequested?: boolean;
+  isReceived?: boolean;
 }
 
-export default function ParticipantsCard({ user }: ParticipantsCardProps) {
+export default function ParticipantsCard({
+  user,
+  isFriend = false,
+  isRequested = false,
+  isReceived = false,
+}: ParticipantsCardProps) {
+  const { sendFriendRequest, acceptFriendRequest, deleteRequest, unfriend } =
+    useFriendShipActions();
+
+  console.log(isReceived, isReceived, isFriend);
   return (
     <Card className='flex flex-col'>
       <CardContent className='flex-1 space-y-4 p-5'>
@@ -65,7 +78,38 @@ export default function ParticipantsCard({ user }: ParticipantsCardProps) {
             View Details
           </Button>
         </Link>
-        <SendRequest />
+
+        {!isFriend && !isRequested && !isReceived && (
+          <FriendActionButton
+            action='send'
+            onClick={() => sendFriendRequest.mutate(user._id)}
+            isLoading={sendFriendRequest.isPending}
+          />
+        )}
+
+        {isReceived && (
+          <FriendActionButton
+            action='accept'
+            onClick={() => acceptFriendRequest.mutate(user._id)}
+            isLoading={acceptFriendRequest.isPending}
+          />
+        )}
+
+        {isRequested && (
+          <FriendActionButton
+            action='cancel'
+            onClick={() => deleteRequest.mutate(user._id)}
+            isLoading={deleteRequest.isPending}
+          />
+        )}
+
+        {isFriend && (
+          <FriendActionButton
+            action='unfriend'
+            onClick={() => unfriend.mutate(user._id)}
+            isLoading={unfriend.isPending}
+          />
+        )}
       </CardFooter>
     </Card>
   );

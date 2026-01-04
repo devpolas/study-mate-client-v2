@@ -19,6 +19,7 @@ export default function LoginWithGoogle() {
       onClick={handleSocialLogin}
       variant='outline'
       className='w-full hover:cursor-pointer'
+      type='button'
     >
       <FcGoogle /> Login with Google
     </Button>
