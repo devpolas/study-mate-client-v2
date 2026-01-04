@@ -58,7 +58,7 @@ export default function ProfilePage() {
       <Card>
         <CardContent className='flex items-center gap-6 p-6'>
           <img
-            src={user.image || "/avatar.png"}
+            src={user.image || "/avatar.svg"}
             alt={user.name}
             className='border rounded-full w-24 h-24 object-cover'
           />

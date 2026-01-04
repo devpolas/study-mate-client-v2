@@ -4,7 +4,7 @@ import axios from "axios";
 
 export default function useAxiosPublic() {
   const instance = axios.create({
-    baseURL: "https://study-mate-api.vercel.app/api/v1",
+    baseURL: import.meta.env.VITE_API_URL,
   });
   return instance;
 }

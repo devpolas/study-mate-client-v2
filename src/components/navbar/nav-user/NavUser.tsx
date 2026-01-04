@@ -8,33 +8,46 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import logo from "@/assets/study_mate.webp";
 import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router";
 
 export default function NavUser() {
-  const { logout } = useAuth();
+  const {
+    logout,
+    auth: { user, loading },
+  } = useAuth();
+
+  if (loading) {
+    return null;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <img
-          className='w-7 h-7 hover:cursor-pointer'
-          src={logo}
-          alt='study mate logo'
+          className='border rounded-full w-7 h-7 hover:cursor-pointer'
+          src={user?.image || "/avatar.svg"}
+          alt='profile image'
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent className='mt-4 w-56' align='end'>
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuGroup>
-          <DropdownMenuItem className='hover:cursor-pointer'>
-            <Link to='/profile'>Profile</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem className='hover:cursor-pointer'>
-            <Link to='/settings'>Settings</Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem className='hover:cursor-pointer'>
-            <Link to='/support'>Help & Support</Link>
-          </DropdownMenuItem>
+          <Link to='/profile'>
+            <DropdownMenuItem className='hover:cursor-pointer'>
+              Profile
+            </DropdownMenuItem>
+          </Link>
+          <Link to='/settings'>
+            <DropdownMenuItem className='hover:cursor-pointer'>
+              Settings
+            </DropdownMenuItem>
+          </Link>
+          <Link to='/support'>
+            <DropdownMenuItem className='hover:cursor-pointer'>
+              Help & Support
+            </DropdownMenuItem>
+          </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem

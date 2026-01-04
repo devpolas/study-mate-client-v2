@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, BookOpen } from "lucide-react";
 import { Link } from "react-router";
+import { SendRequest } from "../friend/FriendActionButtons";
 
 interface ParticipantsCardProps {
   user: {
@@ -20,12 +21,11 @@ interface ParticipantsCardProps {
 
 export default function ParticipantsCard({ user }: ParticipantsCardProps) {
   return (
-    <Card className='flex flex-col hover:shadow-md transition hover:-translate-y-1'>
+    <Card className='flex flex-col'>
       <CardContent className='flex-1 space-y-4 p-5'>
-        {/* Avatar */}
         <div className='flex justify-center'>
           <img
-            src={user.image || "/avatar.png"}
+            src={user.image || "/avatar.svg"}
             alt={user.name}
             className='border rounded-full w-20 h-20 object-cover'
           />
@@ -56,10 +56,16 @@ export default function ParticipantsCard({ user }: ParticipantsCardProps) {
           <span>{user.ratingAverage.toFixed(1)}</span>
         </div>
       </CardContent>
-      <CardFooter className='p-4 pt-0'>
-        <Link to={`/profile/${user._id}`} className='w-full'>
-          <Button className='w-full'>View Details</Button>
+      <CardFooter className='flex p-4 pt-0'>
+        <Link to={`/participant/${user._id}`} className='w-full'>
+          <Button
+            variant='default'
+            className='hover:shadow-md hover:-translate-y-0.5 active:translate-0 hover:cursor-pointer'
+          >
+            View Details
+          </Button>
         </Link>
+        <SendRequest />
       </CardFooter>
     </Card>
   );

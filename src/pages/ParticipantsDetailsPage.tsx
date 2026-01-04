@@ -1,24 +1,25 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAuth } from "@/hooks/useAuth";
-import { useEffect } from "react";
-import { ProfileSkeleton } from "@/components/SkeletonCard/ProfileSkeleton";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatTimeDate } from "@/utils/formateDateTime";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router";
+import useAxiosPublic from "@/hooks/useAxiosPublic";
+import { Button } from "@/components/ui/button";
+import { ParticipantDetailsSkeleton } from "@/components/SkeletonCard/ParticipantDetailsSkeleton";
 
-export default function ProfilePage() {
-  const {
-    fetchMe,
-    logout,
-    auth: { loading, user },
-  } = useAuth();
+export default function ParticipantsDetailsPage() {
+  const { id } = useParams();
+  const axiosPublic = useAxiosPublic();
+  const { isLoading, data: user } = useQuery({
+    queryKey: ["participant", id],
+    queryFn: async () => {
+      const response = await axiosPublic.get(`/users/${id}`);
+      return response.data?.data?.user;
+    },
+  });
 
-  useEffect(() => {
-    fetchMe();
-  }, []);
-
-  if (loading || !user) {
-    return <ProfileSkeleton />;
+  if (isLoading || !user) {
+    return <ParticipantDetailsSkeleton />;
   }
 
   return (
@@ -88,19 +89,18 @@ export default function ProfilePage() {
             <p>{user.email}</p>
           </div>
           <div className='flex justify-between items-center'>
-            <span>Created At</span>
+            <span>Joined at</span>
             <p>{formatTimeDate(user.createdAt)}</p>
           </div>
         </CardContent>
       </Card>
       <div className='flex justify-center items-center'>
         <Button
-          onClick={logout}
           className='hover:cursor-pointer'
           size='default'
           variant='destructive'
         >
-          Logout
+          Send Request
         </Button>
       </div>
     </div>

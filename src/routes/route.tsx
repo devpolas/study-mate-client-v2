@@ -13,6 +13,7 @@ import PublicLayout from "@/layouts/PublicLayout";
 import SettingsPage from "@/pages/SettingsPage";
 import SupportPage from "@/pages/SupportPage";
 import CompleteProfile from "@/pages/CompleteProfile";
+import ParticipantsDetailsPage from "@/pages/ParticipantsDetailsPage";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
       },
 
       { path: "/participants", Component: ParticipantsPage },
+      { path: "/participant/:id", Component: ParticipantsDetailsPage },
       { path: "/about", Component: AboutPage },
       { path: "/support", Component: SupportPage },
       {
