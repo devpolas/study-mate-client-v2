@@ -1,17 +1,39 @@
 import ParticipantsCard from "@/components/Participants/ParticipantsCard";
 import ParticipantsCardSkeleton from "@/components/SkeletonCard/ParticipantsCardSkeleton";
+import { useAuth } from "@/hooks/useAuth";
 import useAxiosPublic from "@/hooks/useAxiosPublic";
+import useFriendShipActions from "@/hooks/useFriendShipActions";
 import type { User } from "@/types/auth";
 import { useQuery } from "@tanstack/react-query";
 
 export default function ParticipantsPage() {
   const axiosPublic = useAxiosPublic();
+  const { allFriend, allFriendRequest } = useFriendShipActions();
+  const {
+    auth: { user: currentUser },
+  } = useAuth();
+
+  //fetch all user
   const { data: users, isLoading } = useQuery({
     queryKey: ["participant"],
     queryFn: async () => {
       const response = await axiosPublic.get("/users");
       return response.data?.data?.users;
     },
+    staleTime: 1000 * 60 * 5,
+  });
+
+  // Fetch current user's friends
+  const { data: friends, isLoading: friendsLoading } = useQuery({
+    queryKey: ["friends", currentUser?._id],
+    queryFn: () => allFriend(currentUser?._id || ""),
+    enabled: !!currentUser?._id, // only run if user exists
+  });
+
+  const { data: friendRequests, isLoading: requestsLoading } = useQuery({
+    queryKey: ["friendRequests", currentUser?._id],
+    queryFn: () => allFriendRequest(currentUser?._id || ""),
+    enabled: !!currentUser?._id,
   });
 
   return (
