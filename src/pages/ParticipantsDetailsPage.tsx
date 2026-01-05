@@ -2,14 +2,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatTimeDate } from "@/utils/formateDateTime";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import useAxiosPublic from "@/hooks/useAxiosPublic";
-import { Button } from "@/components/ui/button";
 import { ParticipantDetailsSkeleton } from "@/components/SkeletonCard/ParticipantDetailsSkeleton";
+import useFriendShipActions from "@/hooks/useFriendShipActions";
+import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
+import FriendActionButton from "@/components/friend/FriendActionButtons";
+import type { User } from "@/types/auth";
+
+interface Friendship {
+  _id: string;
+  requester: User;
+  recipient: User;
+  status: "pending" | "accepted";
+}
 
 export default function ParticipantsDetailsPage() {
   const { id } = useParams();
   const axiosPublic = useAxiosPublic();
+  const navigate = useNavigate();
+  const { allFriend, allFriendRequest } = useFriendShipActions();
   const { isLoading, data: user } = useQuery({
     queryKey: ["participant", id],
     queryFn: async () => {
@@ -18,9 +31,70 @@ export default function ParticipantsDetailsPage() {
     },
   });
 
+  const {
+    fetchMe,
+    auth: { user: currentUser, loading: userLoading, token },
+  } = useAuth();
+
+  useEffect(() => {
+    fetchMe();
+  }, []);
+
+  const { sendFriendRequest, acceptFriendRequest, deleteRequest, unfriend } =
+    useFriendShipActions(currentUser?._id);
+
+  // Accepted friends
+  const {
+    data: friends = [],
+    isLoading: friendsLoading,
+    refetch: friendRefetch,
+  } = useQuery({
+    queryKey: ["friends", currentUser?._id],
+    queryFn: () => allFriend(currentUser!._id),
+    enabled: !userLoading && !!currentUser?._id,
+  });
+
+  // Pending requests
+  const {
+    data: requests = [],
+    isLoading: requestsLoading,
+    refetch: friendRequestsRefetch,
+  } = useQuery({
+    queryKey: ["friendRequests", currentUser?._id],
+    queryFn: () => allFriendRequest(currentUser!._id),
+    enabled: !userLoading && !!currentUser?._id,
+  });
+
   if (isLoading || !user) {
     return <ParticipantDetailsSkeleton />;
   }
+
+  const isFriend = friends.some(
+    (f: Friendship) =>
+      f.status === "accepted" &&
+      (f.requester._id === user._id || f.recipient._id === user._id)
+  );
+
+  const isRequested = requests.some(
+    (r: Friendship) =>
+      r.status === "pending" &&
+      r.requester._id === currentUser?._id &&
+      r.recipient._id === user._id
+  );
+
+  const isReceived = requests.some(
+    (r: Friendship) =>
+      r.status === "pending" &&
+      r.requester._id === user._id &&
+      r.recipient._id === currentUser?._id
+  );
+
+  const onActionSuccess = () => {
+    friendRequestsRefetch();
+    friendRefetch();
+  };
+
+  const isFriendShipLoading = friendsLoading || requestsLoading;
 
   return (
     <div className='space-y-6 mx-auto max-w-5xl'>
@@ -41,13 +115,60 @@ export default function ParticipantsDetailsPage() {
           </div>
         </CardContent>
         <div className='flex'>
-          <Button
-            className='hover:cursor-pointer'
-            size='default'
-            variant='destructive'
-          >
-            Send Request
-          </Button>
+          {!isFriend && !isRequested && !isReceived && (
+            <FriendActionButton
+              action='send'
+              onClick={() => {
+                if (!userLoading || !token || !currentUser) {
+                  return navigate("/signin", {
+                    state: "/participants",
+                    replace: true,
+                  });
+                } else {
+                  sendFriendRequest.mutate(user._id, {
+                    onSuccess: onActionSuccess,
+                  });
+                }
+              }}
+              isLoading={sendFriendRequest.isPending || isFriendShipLoading}
+            />
+          )}
+
+          {isReceived && (
+            <FriendActionButton
+              action='accept'
+              onClick={() =>
+                acceptFriendRequest.mutate(user._id, {
+                  onSuccess: onActionSuccess,
+                })
+              }
+              isLoading={acceptFriendRequest.isPending || isFriendShipLoading}
+            />
+          )}
+
+          {isRequested && (
+            <FriendActionButton
+              action='cancel'
+              onClick={() =>
+                deleteRequest.mutate(user._id, {
+                  onSuccess: onActionSuccess,
+                })
+              }
+              isLoading={deleteRequest.isPending || isFriendShipLoading}
+            />
+          )}
+
+          {isFriend && (
+            <FriendActionButton
+              action='unfriend'
+              onClick={() =>
+                unfriend.mutate(user._id, {
+                  onSuccess: onActionSuccess,
+                })
+              }
+              isLoading={unfriend.isPending || isFriendShipLoading}
+            />
+          )}
         </div>
       </Card>
 

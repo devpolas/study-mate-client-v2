@@ -96,10 +96,11 @@ export default function ParticipantsCard({
                     state: "/participants",
                     replace: true,
                   });
+                } else {
+                  sendFriendRequest.mutate(user._id, {
+                    onSuccess: onActionSuccess,
+                  });
                 }
-                sendFriendRequest.mutate(user._id, {
-                  onSuccess: onActionSuccess,
-                });
               }}
               isLoading={sendFriendRequest.isPending}
             />
