@@ -36,30 +36,28 @@ export default function SupportPage() {
 
   return (
     <div className='space-y-16 mx-auto px-6 py-12 max-w-7xl'>
-      {/* Hero / Banner */}
       <section className='text-center'>
-        <LifeBuoy className='mx-auto text-indigo-600' size={48} />
-        <h1 className='mt-4 font-bold text-gray-800 text-4xl'>
+        <LifeBuoy className='mx-auto text-ring' size={48} />
+        <h1 className='mt-4 font-bold text-muted-foreground sm:text-3xl text-4xl'>
           Help & Support
         </h1>
-        <p className='mx-auto mt-2 max-w-2xl text-gray-600 text-lg'>
+        <p className='mx-auto mt-2 max-w-2xl text-ring text-lg'>
           Need help? Find answers to common questions or reach out to our
           support team.
         </p>
       </section>
 
-      {/* FAQ Section */}
       <section>
-        <h2 className='mb-6 font-bold text-gray-800 text-3xl text-center'>
+        <h2 className='mb-6 font-bold text-muted-foreground text-3xl sm:text-4xl text-center'>
           Frequently Asked Questions
         </h2>
         <Accordion type='single' collapsible className='space-y-4'>
           {faqs.map((faq, i) => (
             <AccordionItem key={i} value={`faq-${i}`}>
-              <AccordionTrigger className='font-semibold text-gray-800'>
+              <AccordionTrigger className='font-semibold text-muted-foreground text-lg sm:text-xl hover:cursor-pointer'>
                 {faq.question}
               </AccordionTrigger>
-              <AccordionContent className='text-gray-600'>
+              <AccordionContent className='text-ring text-sm sm:text-lg'>
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>
@@ -67,16 +65,15 @@ export default function SupportPage() {
         </Accordion>
       </section>
 
-      {/* Contact Form */}
       <section className='items-start gap-12 grid lg:grid-cols-2'>
-        <Card className='p-6 border-gray-200'>
+        <Card className='p-6 border glass'>
           <CardHeader>
-            <CardTitle className='font-bold text-gray-800 text-2xl'>
+            <CardTitle className='font-bold text-muted-foreground text-2xl'>
               Contact Support
             </CardTitle>
           </CardHeader>
-          <CardContent className='space-y-4'>
-            <p className='text-gray-600'>
+          <CardContent className='space-y-2'>
+            <p className='text-ring'>
               Have questions or need assistance? Send us a message and we’ll get
               back to you as soon as possible.
             </p>
@@ -84,42 +81,49 @@ export default function SupportPage() {
               <Input type='text' placeholder='Your Name' required />
               <Input type='email' placeholder='Your Email' required />
               <Textarea placeholder='Your Message' required rows={4} />
-              <Button type='submit' className='w-full'>
+              <Button
+                type='submit'
+                variant='outline'
+                className='w-full hover:cursor-pointer'
+              >
                 Submit
               </Button>
             </form>
           </CardContent>
         </Card>
 
-        {/* Support Resources */}
-        <Card className='bg-gray-50 p-6 border-gray-200'>
+        <Card className='px-6 py-18 border glass'>
           <CardHeader>
-            <CardTitle className='font-bold text-gray-800 text-2xl'>
+            <CardTitle className='font-bold text-muted-foreground text-2xl'>
               Support Resources
             </CardTitle>
           </CardHeader>
           <CardContent className='space-y-6'>
             <div className='flex items-center gap-4'>
-              <Mail className='text-indigo-600' />
+              <Mail className='text-ring' />
               <div>
-                <p className='font-semibold text-gray-800'>Email Support</p>
-                <p className='text-gray-600 text-sm'>support@studymate.com</p>
+                <p className='font-semibold text-muted-foreground'>
+                  Email Support
+                </p>
+                <p className='text-ring text-sm'>support@studymate.com</p>
               </div>
             </div>
 
             <div className='flex items-center gap-4'>
-              <PhoneCall className='text-indigo-600' />
+              <PhoneCall className='text-ring' />
               <div>
-                <p className='font-semibold text-gray-800'>Call Us</p>
-                <p className='text-gray-600 text-sm'>+1 (800) 123-4567</p>
+                <p className='font-semibold text-muted-foreground'>Call Us</p>
+                <p className='text-ring text-sm'>+1 (800) 123-4567</p>
               </div>
             </div>
 
             <div className='flex items-center gap-4'>
-              <LifeBuoy className='text-indigo-600' />
+              <LifeBuoy className='text-ring' />
               <div>
-                <p className='font-semibold text-gray-800'>Knowledge Base</p>
-                <p className='text-gray-600 text-sm'>
+                <p className='font-semibold text-muted-foreground'>
+                  Knowledge Base
+                </p>
+                <p className='text-ring text-sm'>
                   Browse tutorials and guides to solve common issues.
                 </p>
               </div>

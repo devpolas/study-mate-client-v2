@@ -125,3 +125,9 @@
 html {
   scroll-behavior: smooth;
 }
+
+.glass {
+  background: rgba(127, 127, 127, 0.1);
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+}

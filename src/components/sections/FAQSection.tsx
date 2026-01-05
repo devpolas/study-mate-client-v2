@@ -1,4 +1,3 @@
-// FAQSection.tsx
 import {
   Accordion,
   AccordionContent,
@@ -43,27 +42,33 @@ const faqs: FAQItem[] = [
 
 export default function FAQSection() {
   return (
-    <section className='bg-gray-50 py-20'>
-      <div className='mx-auto px-4 max-w-5xl'>
-        <h2 className='font-bold text-gray-800 text-3xl sm:text-4xl text-center'>
+    <section className='py-16'>
+      <div className='mx-auto px-4 max-w-7xl'>
+        <h2 className='font-bold text-muted-foreground text-3xl sm:text-4xl text-center'>
           Frequently Asked Questions
         </h2>
-        <p className='mt-4 mb-8 text-gray-600 text-center'>
+        <p className='mt-4 mb-8 text-ring text-lg text-center'>
           Have questions? Find answers here or reach out to our support team.
         </p>
 
         <Accordion type='single' collapsible className='space-y-2'>
           {faqs.map((faq, index) => (
             <AccordionItem key={index} value={`item-${index}`}>
-              <AccordionTrigger>{faq.question}</AccordionTrigger>
-              <AccordionContent>{faq.answer}</AccordionContent>
+              <AccordionTrigger className='text-muted-foreground text-lg sm:text-xl hover:cursor-pointer'>
+                {faq.question}
+              </AccordionTrigger>
+              <AccordionContent className='text-ring text-sm sm:text-lg'>
+                {faq.answer}
+              </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
 
-        <div className='mt-8 text-center'>
-          <Link to='/help'>
-            <Button variant='outline'>Go to Help & Support</Button>
+        <div className='my-8 text-center'>
+          <Link to='/support'>
+            <Button variant='outline' className='hover:cursor-pointer'>
+              Go to Help & Support
+            </Button>
           </Link>
         </div>
       </div>
