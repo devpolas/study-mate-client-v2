@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import {
   Card,
   CardContent,
@@ -36,6 +36,11 @@ interface ProfileFormData {
   experienceLevel: "Beginner" | "Intermediate" | "Expert";
 }
 
+interface PasswordType {
+  password: string;
+  passwordConfirm: string;
+}
+
 export default function ProfilePage() {
   const id = useId();
   const [image, setProfileImage] = useState<File | null>(null);
@@ -43,7 +48,7 @@ export default function ProfilePage() {
   const [isPending, startTransition] = useTransition();
 
   const axiosSecure = useAxiosSecure();
-  const { updateProfile } = useUpdateProfile();
+  const { updateProfile, updatePassword } = useUpdateProfile();
 
   const {
     isLoading: positionLoading,
@@ -116,6 +121,19 @@ export default function ProfilePage() {
   const onSubmit = async (data: ProfileFormData) => {
     await updateProfile.mutate({ ...data });
   };
+
+  const {
+    handleSubmit: handleChangePassword,
+    control: passwordControl,
+    register: passwordRegister,
+    formState: { errors: passwordErrors },
+  } = useForm<PasswordType>();
+  const password = useWatch({ name: "password", control: passwordControl });
+
+  async function handleUpdatePassword(formData: PasswordType) {
+    await updatePassword.mutate({ ...formData });
+  }
+
   if (loading || !user) {
     return <ProfileSkeleton />;
   }
@@ -333,18 +351,66 @@ export default function ProfilePage() {
         </Button>
       </form>
       {user.authProvider === "mongodb" && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Security</CardTitle>
-          </CardHeader>
-          <CardContent className='space-y-4'>
-            <Input type='password' placeholder='New Password' />
-            <Input type='password' placeholder='Confirm Password' />
-            <Button className='hover:cursor-pointer' variant='destructive'>
-              Update Password
-            </Button>
-          </CardContent>
-        </Card>
+        <form onSubmit={handleChangePassword(handleUpdatePassword)}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Security</CardTitle>
+            </CardHeader>
+            <CardContent className='space-y-4'>
+              <Input
+                {...passwordRegister("password", {
+                  required: "password is required",
+                  minLength: {
+                    value: 6,
+                    message: "password must be 6 character",
+                  },
+                  pattern: {
+                    value:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]+$/,
+                    message:
+                      "password at least one (uppercase and lowercase letter, special character, number)!",
+                  },
+                })}
+                type='password'
+                placeholder='New Password'
+              />
+              {passwordErrors.password && (
+                <p className='text-red-500 text-sm'>
+                  {passwordErrors.password.message}
+                </p>
+              )}
+              <Input
+                {...passwordRegister("passwordConfirm", {
+                  required: "confirm your password",
+                  validate: (value) =>
+                    value === password || "password doesn't match!",
+                })}
+                type='password'
+                placeholder='Confirm Password'
+              />
+              {passwordErrors.passwordConfirm && (
+                <p className='text-red-500 text-sm'>
+                  {passwordErrors.passwordConfirm.message}
+                </p>
+              )}
+              <Button
+                disabled={updatePassword.isPending}
+                type='submit'
+                className='hover:cursor-pointer'
+                variant='destructive'
+              >
+                {updatePassword.isPending ? (
+                  <Badge variant='outline'>
+                    <Spinner />
+                    Processing
+                  </Badge>
+                ) : (
+                  "update password"
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+        </form>
       )}
     </div>
   );

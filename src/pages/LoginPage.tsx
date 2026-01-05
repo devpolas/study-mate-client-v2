@@ -46,7 +46,11 @@ export default function LoginPage() {
           </CardDescription>
           <CardAction>
             <Link state={location.state?.from || "/"} to='/signup'>
-              <Button className='hover:cursor-pointer' variant='link'>
+              <Button
+                type='button'
+                className='hover:cursor-pointer'
+                variant='link'
+              >
                 Signup
               </Button>
             </Link>

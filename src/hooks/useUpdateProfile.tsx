@@ -11,8 +11,13 @@ type PayloadType = {
   location?: string;
 };
 
+interface PasswordType {
+  password: string;
+  passwordConfirm: string;
+}
+
 export default function useUpdateProfile() {
-  const { fetchMe } = useAuth();
+  const { fetchMe, logout } = useAuth();
   const axiosSecure = useAxiosSecure();
   const updateProfile = useMutation({
     mutationFn: async (payload: PayloadType) => {
@@ -22,5 +27,14 @@ export default function useUpdateProfile() {
       fetchMe();
     },
   });
-  return { updateProfile };
+  const updatePassword = useMutation({
+    mutationFn: async (payload: PasswordType) => {
+      const res = await axiosSecure.patch("/users/updatePassword", payload);
+      return res.data;
+    },
+    onSuccess: () => {
+      logout();
+    },
+  });
+  return { updateProfile, updatePassword };
 }
