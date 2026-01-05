@@ -119,16 +119,17 @@ export default function ParticipantsDetailsPage() {
             <FriendActionButton
               action='send'
               onClick={() => {
-                if (!userLoading || !token || !currentUser) {
-                  return navigate("/signin", {
-                    state: "/participants",
+                if (!userLoading && (!token || !currentUser)) {
+                  navigate("/signin", {
+                    state: { from: `/participant/${user._id}` },
                     replace: true,
                   });
-                } else {
-                  sendFriendRequest.mutate(user._id, {
-                    onSuccess: onActionSuccess,
-                  });
+                  return;
                 }
+
+                sendFriendRequest.mutate(user._id, {
+                  onSuccess: onActionSuccess,
+                });
               }}
               isLoading={sendFriendRequest.isPending || isFriendShipLoading}
             />
