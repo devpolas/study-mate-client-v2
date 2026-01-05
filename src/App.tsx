@@ -14,7 +14,7 @@ export default function App() {
     if (token) {
       fetchMe();
     }
-  }, []);
+  }, [token]);
 
   const queryClient = new QueryClient();
   return (
