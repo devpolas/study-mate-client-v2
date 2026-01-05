@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Star, BookOpen } from "lucide-react";
 import FriendActionButton from "../friend/FriendActionButtons";
 import useFriendShipActions from "@/hooks/useFriendShipActions";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ParticipantsCardProps {
   user: {
@@ -33,6 +34,11 @@ export default function ParticipantsCard({
 }: ParticipantsCardProps) {
   const { sendFriendRequest, acceptFriendRequest, deleteRequest, unfriend } =
     useFriendShipActions(user?._id);
+  const navigate = useNavigate();
+
+  const {
+    auth: { loading, user: currentUser, token },
+  } = useAuth();
 
   return (
     <Card className='flex flex-col'>
@@ -84,11 +90,17 @@ export default function ParticipantsCard({
           {!isFriend && !isRequested && !isReceived && (
             <FriendActionButton
               action='send'
-              onClick={() =>
+              onClick={() => {
+                if (!loading || !token || !currentUser) {
+                  return navigate("/signin", {
+                    state: "/participants",
+                    replace: true,
+                  });
+                }
                 sendFriendRequest.mutate(user._id, {
                   onSuccess: onActionSuccess,
-                })
-              }
+                });
+              }}
               isLoading={sendFriendRequest.isPending}
             />
           )}

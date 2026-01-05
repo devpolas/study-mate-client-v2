@@ -44,7 +44,7 @@ export interface GetAllUsersResponse {
 export default function ParticipantsPage() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [limit] = useState(11);
+  const [limit] = useState(10);
 
   const axiosPublic = useAxiosPublic();
   const { allFriend, allFriendRequest } = useFriendShipActions();
