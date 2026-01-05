@@ -1,6 +1,7 @@
 import ParticipantsCard from "@/components/Participants/ParticipantsCard";
 import ParticipantsCardSkeleton from "@/components/SkeletonCard/ParticipantsCardSkeleton";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Pagination,
   PaginationContent,
@@ -43,7 +44,7 @@ export interface GetAllUsersResponse {
 export default function ParticipantsPage() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const limit = 10;
+  const [limit] = useState(11);
 
   const axiosPublic = useAxiosPublic();
   const { allFriend, allFriendRequest } = useFriendShipActions();
@@ -70,8 +71,6 @@ export default function ParticipantsPage() {
     },
     staleTime: 1000 * 60 * 5,
   });
-
-  console.log(participants);
 
   // /api/v2/users?query=John&role=student&studyMode=true&experienceLevel=Beginner&page=1&limit=10&sort=name
 
@@ -101,26 +100,25 @@ export default function ParticipantsPage() {
 
   const { totalPages }: GetAllUsersResponse = participants;
 
+  // pagination logic
   function getPageNumbers(current: number, total: number, maxVisible = 5) {
     const pages: (number | string)[] = [];
 
     if (total <= maxVisible) {
-      // All pages fit
       for (let i = 1; i <= total; i++) pages.push(i);
     } else {
-      // Always show first page
       pages.push(1);
 
       const start = Math.max(current - 1, 2);
       const end = Math.min(current + 1, total - 1);
 
-      if (start > 2) pages.push("..."); // left ellipsis
+      if (start > 2) pages.push("...");
 
       for (let i = start; i <= end; i++) pages.push(i);
 
-      if (end < total - 1) pages.push("..."); // right ellipsis
+      if (end < total - 1) pages.push("...");
 
-      pages.push(total); // last page
+      pages.push(total);
     }
 
     return pages;
@@ -130,15 +128,16 @@ export default function ParticipantsPage() {
     <div>
       <h1 className='mb-6 font-bold text-2xl'>All Participants</h1>
 
-      <div className='flex sm:flex-row flex-col justify-between items-center sm:items-baseline gap-4 sm:gap-0 pb-8'>
-        <div className='flex items-center gap-2 w-full max-w-sm'>
+      <div className='flex justify-end pb-8'>
+        <div className='items-center gap-3 grid w-full max-w-sm'>
+          <Label htmlFor='text'>Search...</Label>
           <Input
             onChange={(e) => setQuery(e.target.value)}
             type='text'
-            placeholder='search'
+            id='query'
+            placeholder='Email'
           />
         </div>
-        <div></div>
       </div>
 
       {loading ? (
@@ -209,7 +208,7 @@ export default function ParticipantsPage() {
                     isActive={p === page}
                     onClick={() => setPage(p)}
                   >
-                    {p}
+                    {p ? p : "..."}
                   </PaginationLink>
                 ) : (
                   <PaginationEllipsis />
