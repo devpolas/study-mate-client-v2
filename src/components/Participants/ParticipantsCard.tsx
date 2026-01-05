@@ -21,6 +21,7 @@ interface ParticipantsCardProps {
   isFriend?: boolean;
   isRequested?: boolean;
   isReceived?: boolean;
+  onActionSuccess?: () => void;
 }
 
 export default function ParticipantsCard({
@@ -28,9 +29,10 @@ export default function ParticipantsCard({
   isFriend = false,
   isRequested = false,
   isReceived = false,
+  onActionSuccess,
 }: ParticipantsCardProps) {
   const { sendFriendRequest, acceptFriendRequest, deleteRequest, unfriend } =
-    useFriendShipActions();
+    useFriendShipActions(user?._id);
 
   return (
     <Card className='flex flex-col'>
@@ -78,37 +80,55 @@ export default function ParticipantsCard({
           </Button>
         </Link>
 
-        {!isFriend && !isRequested && !isReceived && (
-          <FriendActionButton
-            action='send'
-            onClick={() => sendFriendRequest.mutate(user._id)}
-            isLoading={sendFriendRequest.isPending}
-          />
-        )}
+        <div>
+          {!isFriend && !isRequested && !isReceived && (
+            <FriendActionButton
+              action='send'
+              onClick={() =>
+                sendFriendRequest.mutate(user._id, {
+                  onSuccess: onActionSuccess,
+                })
+              }
+              isLoading={sendFriendRequest.isPending}
+            />
+          )}
 
-        {isReceived && (
-          <FriendActionButton
-            action='accept'
-            onClick={() => acceptFriendRequest.mutate(user._id)}
-            isLoading={acceptFriendRequest.isPending}
-          />
-        )}
+          {isReceived && (
+            <FriendActionButton
+              action='accept'
+              onClick={() =>
+                acceptFriendRequest.mutate(user._id, {
+                  onSuccess: onActionSuccess,
+                })
+              }
+              isLoading={acceptFriendRequest.isPending}
+            />
+          )}
 
-        {isRequested && (
-          <FriendActionButton
-            action='cancel'
-            onClick={() => deleteRequest.mutate(user._id)}
-            isLoading={deleteRequest.isPending}
-          />
-        )}
+          {isRequested && (
+            <FriendActionButton
+              action='cancel'
+              onClick={() =>
+                deleteRequest.mutate(user._id, {
+                  onSuccess: onActionSuccess,
+                })
+              }
+              isLoading={deleteRequest.isPending}
+            />
+          )}
 
-        {isFriend && (
-          <FriendActionButton
-            action='unfriend'
-            onClick={() => unfriend.mutate(user._id)}
-            isLoading={unfriend.isPending}
-          />
-        )}
+          {isFriend && (
+            <FriendActionButton
+              action='unfriend'
+              onClick={() =>
+                unfriend.mutate(user._id, {
+                  onSuccess: onActionSuccess,
+                })
+              }
+              isLoading={unfriend.isPending}
+            />
+          )}
+        </div>
       </CardFooter>
     </Card>
   );
