@@ -2,9 +2,9 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, BookOpen } from "lucide-react";
-import { Link } from "react-router";
 import FriendActionButton from "../friend/FriendActionButtons";
 import useFriendShipActions from "@/hooks/useFriendShipActions";
+import { Link } from "react-router";
 
 interface ParticipantsCardProps {
   user: {

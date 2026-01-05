@@ -21,35 +21,29 @@ const router = createBrowserRouter([
     Component: MainLayout,
     children: [
       { index: true, Component: HomePage },
+      { path: "participants", Component: ParticipantsPage },
+      { path: "participant/:id", Component: ParticipantsDetailsPage },
+      { path: "support", Component: SupportPage },
+      { path: "about", Component: AboutPage },
       {
         Component: PublicLayout,
         children: [
-          {
-            path: "/signin",
-            Component: LoginPage,
-          },
-          { path: "/signup", Component: SignupPage },
+          { path: "signin", Component: LoginPage },
+          { path: "signup", Component: SignupPage },
         ],
       },
 
-      { path: "/participants", Component: ParticipantsPage },
-      { path: "/participant/:id", Component: ParticipantsDetailsPage },
-      { path: "/about", Component: AboutPage },
-      { path: "/support", Component: SupportPage },
       {
         Component: AuthLayout,
         children: [
-          { path: "/profile", Component: ProfilePage },
-          { path: "/complete-profile", Component: CompleteProfile },
-          { path: "/friends", Component: FriendsPage },
-          { path: "/settings", Component: SettingsPage },
+          { path: "profile", Component: ProfilePage },
+          { path: "complete-profile", Component: CompleteProfile },
+          { path: "friends", Component: FriendsPage },
+          { path: "settings", Component: SettingsPage },
         ],
       },
 
-      {
-        path: "*",
-        Component: ErrorPage,
-      },
+      { path: "*", Component: ErrorPage },
     ],
   },
 ]);

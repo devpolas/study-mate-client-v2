@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/select";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useId, useState, useTransition } from "react";
-import { ProfileSkeleton } from "@/components/SkeletonCard/ProfileSkeleton";
 import { Badge } from "@/components/ui/badge";
 import { useGeoLocation } from "@/hooks/useGeoLocation";
 import { Spinner } from "@/components/ui/spinner";
@@ -26,6 +25,7 @@ import { MapPin } from "lucide-react";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
 import { uploadImageToImgBB } from "@/utils/imageUpload";
 import useUpdateProfile from "@/hooks/useUpdateProfile";
+import { CompleteProfileSkeleton } from "@/components/SkeletonCard/CompleteProfileSkeleton";
 
 interface ProfileFormData {
   name?: string;
@@ -71,17 +71,9 @@ export default function ProfilePage() {
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
-  } = useForm<ProfileFormData>({
-    defaultValues: {
-      name: user?.name || "",
-      subject: user?.subject || "",
-      availability: user?.availability || "Morning 6:00 AM – 10:00 AM",
-      location: user?.location || "",
-      studyMode: user?.studyMode || false,
-      experienceLevel: user?.experienceLevel || "Beginner",
-    },
-  });
+  } = useForm<ProfileFormData>();
 
   useEffect(() => {
     if (address) {
@@ -93,6 +85,19 @@ export default function ProfilePage() {
       );
     }
   }, [address, setValue]);
+
+  useEffect(() => {
+    if (user) {
+      reset({
+        name: user.name,
+        subject: user.subject,
+        availability: user.availability,
+        location: user.location,
+        studyMode: user.studyMode,
+        experienceLevel: user.experienceLevel,
+      });
+    }
+  }, [user, reset]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = (e.target.files && e.target.files[0]) || null;
@@ -135,7 +140,7 @@ export default function ProfilePage() {
   }
 
   if (loading || !user) {
-    return <ProfileSkeleton />;
+    return <CompleteProfileSkeleton />;
   }
 
   return (

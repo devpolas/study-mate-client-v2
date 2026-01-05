@@ -5,6 +5,7 @@ import { Link } from "react-router";
 
 interface FriendCardProps {
   user: {
+    _id: string;
     name: string;
     slug: string;
     image?: string;
@@ -20,7 +21,7 @@ export function FriendCard({ user, actions }: FriendCardProps) {
     <Card>
       <CardContent className='flex justify-between items-center gap-4 p-4'>
         <Link
-          to={`/profile/${user.slug}`}
+          to={`/participant/${user._id}`}
           className='flex items-center gap-4 hover:opacity-90 min-w-0'
         >
           <img

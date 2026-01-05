@@ -24,7 +24,7 @@ export default function ParticipantsDetailsPage() {
 
   return (
     <div className='space-y-6 mx-auto max-w-5xl'>
-      <Card>
+      <Card className='flex sm:flex-row flex-col items-center gap-4 sm:gap-8'>
         <CardContent className='flex items-center gap-6 p-6'>
           <img
             src={user.image || "/avatar.svg"}
@@ -40,6 +40,15 @@ export default function ParticipantsDetailsPage() {
             <p className='text-muted-foreground text-sm'>@{user.slug}</p>
           </div>
         </CardContent>
+        <div className='flex'>
+          <Button
+            className='hover:cursor-pointer'
+            size='default'
+            variant='destructive'
+          >
+            Send Request
+          </Button>
+        </div>
       </Card>
 
       <div className='gap-6 grid md:grid-cols-2'>
@@ -94,15 +103,6 @@ export default function ParticipantsDetailsPage() {
           </div>
         </CardContent>
       </Card>
-      <div className='flex justify-center items-center'>
-        <Button
-          className='hover:cursor-pointer'
-          size='default'
-          variant='destructive'
-        >
-          Send Request
-        </Button>
-      </div>
     </div>
   );
 }

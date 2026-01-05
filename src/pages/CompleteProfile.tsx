@@ -19,17 +19,16 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useId, useState, useTransition } from "react";
 import { Badge } from "@/components/ui/badge";
-import { CompleteProfileSkeleton } from "@/components/SkeletonCard/CompleteProfileSkeleton";
 import { useGeoLocation } from "@/hooks/useGeoLocation";
-import { MapPin } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
-import { uploadImageToImgBB } from "@/utils/imageUpload";
+import { MapPin } from "lucide-react";
 import useAxiosSecure from "@/hooks/useAxiosSecure";
+import { uploadImageToImgBB } from "@/utils/imageUpload";
 import useUpdateProfile from "@/hooks/useUpdateProfile";
+import { CompleteProfileSkeleton } from "@/components/SkeletonCard/CompleteProfileSkeleton";
 
 interface ProfileFormData {
-  image: string;
-  name: string;
+  name?: string;
   subject?: string;
   availability?: string;
   location?: string;
@@ -37,13 +36,15 @@ interface ProfileFormData {
   experienceLevel: "Beginner" | "Intermediate" | "Expert";
 }
 
-export default function CompleteProfile() {
+export default function ProfilePage() {
   const id = useId();
   const [image, setProfileImage] = useState<File | null>(null);
   const [localImageUrl, setLocalImageUrl] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
   const axiosSecure = useAxiosSecure();
   const { updateProfile } = useUpdateProfile();
+
   const {
     isLoading: positionLoading,
     address,
@@ -65,17 +66,9 @@ export default function CompleteProfile() {
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { errors },
-  } = useForm<ProfileFormData>({
-    defaultValues: {
-      name: user?.name || "",
-      subject: user?.subject || "",
-      availability: user?.availability || "Morning 6:00 AM – 10:00 AM",
-      location: user?.location || "",
-      studyMode: user?.studyMode || false,
-      experienceLevel: user?.experienceLevel || "Beginner",
-    },
-  });
+  } = useForm<ProfileFormData>();
 
   useEffect(() => {
     if (address) {
@@ -87,6 +80,19 @@ export default function CompleteProfile() {
       );
     }
   }, [address, setValue]);
+
+  useEffect(() => {
+    if (user) {
+      reset({
+        name: user.name,
+        subject: user.subject,
+        availability: user.availability,
+        location: user.location,
+        studyMode: user.studyMode,
+        experienceLevel: user.experienceLevel,
+      });
+    }
+  }, [user, reset]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = (e.target.files && e.target.files[0]) || null;
@@ -105,7 +111,6 @@ export default function CompleteProfile() {
         const response = await axiosSecure.patch("/users/updateMe", {
           image: url,
         });
-        console.log(response);
         if (response.status === 200) {
           console.log("updated");
         }
@@ -122,14 +127,11 @@ export default function CompleteProfile() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className='space-y-6 mx-auto max-w-5xl'
-    >
+    <div className='space-y-6 mx-auto max-w-5xl'>
       <Card>
-        <CardContent className='flex flex-row items-center gap-6 p-6'>
+        <CardContent className='flex items-center gap-6 p-6'>
           <img
-            src={localImageUrl ? localImageUrl : user.image || "/avatar.png"}
+            src={localImageUrl ? localImageUrl : user.image || "/avatar.svg"}
             alt={user.name}
             className='border rounded-full w-24 h-24 object-cover'
           />
@@ -168,7 +170,10 @@ export default function CompleteProfile() {
           </CardFooter>
         )}
       </Card>
-      <div className='gap-6 grid md:grid-cols-2'>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className='gap-6 grid md:grid-cols-2'
+      >
         <Card>
           <CardHeader>
             <CardTitle>Personal Info</CardTitle>
@@ -295,9 +300,9 @@ export default function CompleteProfile() {
                   <SelectValue placeholder='Experience Level' />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='beginner'>Beginner</SelectItem>
-                  <SelectItem value='intermediate'>Intermediate</SelectItem>
-                  <SelectItem value='expert'>Expert</SelectItem>
+                  <SelectItem value='Beginner'>Beginner</SelectItem>
+                  <SelectItem value='Intermediate'>Intermediate</SelectItem>
+                  <SelectItem value='Expert'>Expert</SelectItem>
                 </SelectContent>
               </Select>
               {errors.experienceLevel?.types?.required && (
@@ -332,7 +337,7 @@ export default function CompleteProfile() {
             "Update"
           )}
         </Button>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 }
