@@ -17,7 +17,7 @@ export default function NavUser() {
     auth: { user, loading },
   } = useAuth();
 
-  if (loading) {
+  if (loading || !user) {
     return null;
   }
 

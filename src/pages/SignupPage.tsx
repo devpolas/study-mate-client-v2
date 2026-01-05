@@ -41,7 +41,10 @@ export default function SignupPage() {
     );
 
     if (response.payload) {
-      navigate(location.state || "/", { replace: true });
+      navigate("/complete-profile", {
+        replace: true,
+        state: location.state || "/",
+      });
     }
   }
 
@@ -56,7 +59,11 @@ export default function SignupPage() {
             </CardDescription>
             <CardAction>
               <Link to='/signin'>
-                <Button className='hover:cursor-pointer' variant='link'>
+                <Button
+                  type='button'
+                  className='hover:cursor-pointer'
+                  variant='link'
+                >
                   Signin
                 </Button>
               </Link>
