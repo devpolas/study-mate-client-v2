@@ -6,3 +6,4 @@ VITE_MESSAGING_SENDER_ID = input_keys
 VITE_APP_ID = input_keys
 VITE_MEASUREMENT_ID = input_keys
 VITE_IMGBB_API_KEY = input_keys
+VITE_API_URL = https://study-mate-api.onrender.com/api/v2
