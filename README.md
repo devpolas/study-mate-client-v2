@@ -1,73 +1,146 @@
-# React + TypeScript + Vite
+# 📚 Study Mate – Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Study Mate** is a modern, scalable **React + TypeScript** client application focused on **authentication, user discovery, filtering, and pagination**.  
+It uses **Redux Toolkit for global auth state management** and **TanStack React Query for efficient server-state handling (data fetching & mutations)**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Tech Stack
 
-## React Compiler
+### Core
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19
+- TypeScript
+- Vite
 
-## Expanding the ESLint configuration
+### State Management
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Redux Toolkit – Authentication & global state
+- TanStack React Query – Server state, caching, pagination, mutations
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Routing & Forms
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- React Router v7
+- React Hook Form
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### UI & Styling
+
+- Tailwind CSS v4
+- Radix UI
+- Lucide Icons / React Icons
+- Motion
+- SweetAlert2 / React Toastify
+
+### Data & Charts
+
+- Axios
+- Recharts
+
+### Authentication
+
+- Firebase Authentication
+- JWT-based backend integration
+
+---
+
+## 🧠 Architecture Overview
+
+```text
+src/
+├── app/
+│   ├── store.ts
+│   └── authSlice.ts
+├── features/
+│   ├── auth/
+│   ├── users/
+│   └── pagination/
+├── hooks/
+├── services/
+├── routes/
+├── components/
+├── pages/
+└── utils/
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🔐 Authentication (Redux)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Firebase authentication
+- Auth state stored in Redux Toolkit
+- Protected routes powered by global auth state
+
+---
+
+## 🔄 Data Fetching (React Query)
+
+All server-side data is handled with **TanStack React Query**.
+
+```ts
+useQuery({
+  queryKey: ["users", page, filters],
+  queryFn: fetchUsers,
+  keepPreviousData: true,
+});
 ```
+
+---
+
+## 🔍 Features
+
+- Search users
+- Filter by subject, experience, study mode
+- Pagination (scales to 100+ pages)
+- Optimistic UI updates
+- Smooth animations
+
+---
+
+## 📦 Installation
+
+```bash
+git clone https://github.com/your-username/study-mate-client.git
+cd study-mate-client
+npm install
+```
+
+---
+
+## ▶️ Run
+
+```bash
+npm run dev
+```
+
+---
+
+## 🏗️ Build
+
+```bash
+npm run build
+npm run preview
+```
+
+---
+
+## 🔧 Environment Variables
+
+```env
+VITE_API_BASE_URL=http://localhost:3000/api/v2
+VITE_FIREBASE_API_KEY=your_key
+VITE_FIREBASE_AUTH_DOMAIN=your_domain
+VITE_FIREBASE_PROJECT_ID=your_project_id
+```
+
+---
+
+## 📄 License
+
+MIT License
+
+---
+
+## 👤 Author
+
+**Junior Polas**  
+Full-Stack Developer
