@@ -142,5 +142,5 @@ MIT License
 
 ## 👤 Author
 
-**Junior Polas**  
+** Polas** Chandra Barmon 
 Full-Stack Developer
